@@ -1,7 +1,7 @@
 step 7
 step 7
-3
-4
+step 8
+step 8
 5
 6
 7
