@@ -6,7 +6,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println(isAllPositiveNumbers(null));
+        System.out.println(isAllPositiveNumbers("null"));
 
     }
 }
