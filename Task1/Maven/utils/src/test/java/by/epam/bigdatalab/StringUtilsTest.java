@@ -33,5 +33,6 @@ public class StringUtilsTest
     @Test
     public void NotNumber() {
         assertFalse(StringUtils.isPositiveNumber(NOT_NUMBER));
+        assertFalse(StringUtils.isPositiveNumber(null));
     }
 }
