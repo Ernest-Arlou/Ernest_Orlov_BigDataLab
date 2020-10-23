@@ -1,0 +1,172 @@
+#!/bin/bash
+#
+# Perform environment setup installing all necessary 
+# applications for Java development: Maven, Git, Java, PostgreSQL.
+################################################################################
+help()
+{
+# Display Help
+echo "this script performs environment setup installing all necessary 
+applications for Java development: Maven, Git, Java, PostgreSQL"
+echo
+echo "usage: environmentscript [options...]"
+echo "options:"
+echo "-j|--java   Skips java instaltion"
+echo "-g|--git   Skips git instaltion"
+echo "-m|--maven   Skips maven instaltion"
+echo "-p|--postgresql   Skips postgresql instaltion"
+echo "-v|--verbose   Verbouse mode"
+
+}
+################################################################################
+# Install Maven.
+# Returns:
+#   0 if maven was installed, 1 on error.
+#######################################
+install_maven() {
+yum install -y wget 
+TEMPORARY_DIRECTORY="$(mktemp -d)"
+DOWNLOAD_TO="$TEMPORARY_DIRECTORY/maven.tgz"
+
+wget -O "$DOWNLOAD_TO" http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+
+tar xzf $DOWNLOAD_TO -C $TEMPORARY_DIRECTORY
+rm $DOWNLOAD_TO
+
+mv $TEMPORARY_DIRECTORY/apache-maven-* /usr/local/maven
+echo -e 'export M2_HOME=/usr/local/maven\nexport PATH=${M2_HOME}/bin:${PATH}' > /etc/profile.d/maven.sh
+source /etc/profile.d/maven.sh
+
+echo -e '\n\n!! Note you must relogin to get mvn in your path !!'
+
+rm -r "$TEMPORARY_DIRECTORY"
+
+}
+################################################################################
+install_java() {
+if ! yum install -y java-1.8.0-openjdk-devel; then
+return 1
+fi
+}
+################################################################################
+install_git() {
+if ! yum install -y git; then
+return 1
+fi
+}
+################################################################################
+install_postgreslq() {
+rpm -Uvh https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+yum -y install https://yum.postgresql.org/9.6/redhat/rhel-6-x86_64/postgresql96-server-9.6.19-1PGDG.rhel6.x86_64.rpm
+if ! service postgresql-9.6 initdb; then
+return 1
+fi
+if ! service postgresql-9.6 start; then
+return 1
+fi
+}
+################################################################################
+VERBOSE=0
+MAVEN=0
+GIT=0
+JAVA=0
+POSTGRESQL=0
+HELP=0
+
+for i in "$@"; do 
+
+case $i in
+    -v|--verbose)
+    VERBOSE=1
+    ;;
+esac
+case $i in
+    -m|--mavem)
+    MAVEN=1
+    ;;
+esac
+case $i in
+    -j|--java)
+    JAVA=1
+    ;;
+esac
+case $i in
+    -g|--git)
+    GIT=1
+    ;;
+esac
+case $i in
+    -p|--postgresql)
+    POSTGRESQL=1
+    ;;
+esac
+case $i in
+    -h|--help)
+    HELP=1
+    ;;
+esac
+done
+
+if(( HELP > 0 )); then
+   help
+
+   else
+   
+
+   if (( JAVA < 1 )); then
+      echo "installing java"
+         if (( VERBOSE < 1 )); then
+            install_java >&- 2>&-
+         else
+            install_java
+         fi
+         if (( $? >0 )); then
+            echo "java installation failed"
+		 else
+		    echo "java installation complete"
+         fi
+    fi
+	
+	if (( MAVEN < 1 )); then
+      echo "installing maven"
+         if (( VERBOSE < 1 )); then
+            install_maven >&- 2>&-
+         else
+            install_maven
+         fi
+         if (( $? >0 )); then
+            echo "maven installation failed"
+		 else
+		    echo "maven installation complete"
+         fi
+    fi
+	
+	if (( GIT < 1 )); then
+      echo "installing git"
+         if (( VERBOSE < 1 )); then
+            install_git >&- 2>&-
+         else
+            install_git
+         fi
+         if (( $? >0 )); then
+            echo "git installation failed"
+		 else
+		    echo "git installation complete"
+         fi
+    fi
+	
+	if (( POSTGRESQL < 1 )); then
+      echo "installing postgresql"
+         if (( VERBOSE < 1 )); then
+            install_postgreslq >&- 2>&-
+         else
+            install_postgreslq
+         fi
+         if (( $? >0 )); then
+            echo "postgresql installation failed"
+		 else
+		    echo "postgresql installation complete"
+         fi
+    fi
+	
+fi
