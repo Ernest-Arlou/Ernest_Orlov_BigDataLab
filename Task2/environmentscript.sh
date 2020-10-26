@@ -142,31 +142,31 @@ if(( HELP > 0 )); then
    
    if (( JAVA > 0 )); then
       echo "installing java"
-	  output install_java 
-	  installationResult java		        
-    fi
+      output install_java
+      installationResult java		        
+   fi
 
-	if (( MAVEN > 0 )); then
+   if (( MAVEN > 0 )); then
       echo "installing maven"
-	  output install_maven 
-	  installationResult maven
-    fi
+      output install_maven 
+      installationResult maven
+   fi
 	
-	if (( GIT > 0 )); then
-	  echo "installing git"
-	  output install_git 
-	  installationResult git
-    fi
+   if (( GIT > 0 )); then
+      echo "installing git"
+      output install_git 
+      installationResult git
+   fi
 	
-	if (( POSTGRESQL > 0 )); then
+   if (( POSTGRESQL > 0 )); then
       echo "installing postgresql"
-	  output install_postgreslq 
-	  installationResult postgresql
-    fi
+      output install_postgreslq 
+      installationResult postgresql
+   fi
 	
-	java -version
-	mvn -version
-	git --version
-	psql --version
+   java -version
+   mvn -version
+   git --version
+   psql --version
 	
 fi
