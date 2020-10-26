@@ -9,12 +9,12 @@ help()
 echo "this script performs environment setup installing all necessary 
 applications for Java development: Maven, Git, Java, PostgreSQL"
 echo
-echo "usage: environmentscript [options...]"
+echo "usage: environmentscript.sh [options...]"
 echo "options:"
-echo "-j|--java   Skips java instaltion"
-echo "-g|--git   Skips git instaltion"
-echo "-m|--maven   Skips maven instaltion"
-echo "-p|--postgresql   Skips postgresql instaltion"
+echo "-j|--java    java instaltion"
+echo "-g|--git    git instaltion"
+echo "-m|--maven    maven instaltion"
+echo "-p|--postgresql    postgresql instaltion"
 echo "-v|--verbose   Verbouse mode"
 
 }
@@ -22,8 +22,8 @@ echo "-v|--verbose   Verbouse mode"
 # Install Maven.
 # Returns:
 #   0 if maven was installed, 1 on error.
-#######################################
-install_maven() {
+################################################################################
+function install_maven() {
 yum install -y wget 
 TEMPORARY_DIRECTORY="$(mktemp -d)"
 DOWNLOAD_TO="$TEMPORARY_DIRECTORY/maven.tgz"
@@ -43,17 +43,29 @@ rm -r "$TEMPORARY_DIRECTORY"
 
 }
 ################################################################################
+# Install Java.
+# Returns:
+#   0 if maven was installed, 1 on error.
+################################################################################
 install_java() {
 if ! yum install -y java-1.8.0-openjdk-devel; then
 return 1
 fi
 }
 ################################################################################
+# Install Git.
+# Returns:
+#   0 if maven was installed, 1 on error.
+################################################################################
 install_git() {
 if ! yum install -y git; then
 return 1
 fi
 }
+################################################################################
+# Install PostgreSQL.
+# Returns:
+#   0 if maven was installed, 1 on error.
 ################################################################################
 install_postgreslq() {
 rpm -Uvh https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm
@@ -64,6 +76,22 @@ fi
 if ! service postgresql-9.6 start; then
 return 1
 fi
+}
+################################################################################
+installationResult() {
+if (( $? >0 )); then
+            echo "$1 installation failed"
+		 else
+		    echo "$1 installation complete"
+         fi
+}
+################################################################################
+output(){
+ if (( VERBOSE < 1 )); then
+            $1 >&- 2>&-
+         else
+            $1
+         fi
 }
 ################################################################################
 VERBOSE=0
@@ -112,61 +140,33 @@ if(( HELP > 0 )); then
 
    else
    
-
-   if (( JAVA < 1 )); then
+   if (( JAVA > 0 )); then
       echo "installing java"
-         if (( VERBOSE < 1 )); then
-            install_java >&- 2>&-
-         else
-            install_java
-         fi
-         if (( $? >0 )); then
-            echo "java installation failed"
-		 else
-		    echo "java installation complete"
-         fi
+	  output install_java 
+	  installationResult java		        
     fi
-	
-	if (( MAVEN < 1 )); then
+
+	if (( MAVEN > 0 )); then
       echo "installing maven"
-         if (( VERBOSE < 1 )); then
-            install_maven >&- 2>&-
-         else
-            install_maven
-         fi
-         if (( $? >0 )); then
-            echo "maven installation failed"
-		 else
-		    echo "maven installation complete"
-         fi
+	  output install_maven 
+	  installationResult maven
     fi
 	
-	if (( GIT < 1 )); then
-      echo "installing git"
-         if (( VERBOSE < 1 )); then
-            install_git >&- 2>&-
-         else
-            install_git
-         fi
-         if (( $? >0 )); then
-            echo "git installation failed"
-		 else
-		    echo "git installation complete"
-         fi
+	if (( GIT > 0 )); then
+	  echo "installing git"
+	  output install_git 
+	  installationResult git
     fi
 	
-	if (( POSTGRESQL < 1 )); then
+	if (( POSTGRESQL > 0 )); then
       echo "installing postgresql"
-         if (( VERBOSE < 1 )); then
-            install_postgreslq >&- 2>&-
-         else
-            install_postgreslq
-         fi
-         if (( $? >0 )); then
-            echo "postgresql installation failed"
-		 else
-		    echo "postgresql installation complete"
-         fi
+	  output install_postgreslq 
+	  installationResult postgresql
     fi
+	
+	java -version
+	mvn -version
+	git --version
+	psql --version
 	
 fi
