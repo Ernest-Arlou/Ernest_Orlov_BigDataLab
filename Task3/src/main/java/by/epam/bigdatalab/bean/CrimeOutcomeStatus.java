@@ -16,4 +16,11 @@ public class CrimeOutcomeStatus {
     }
 
 
+    @Override
+    public String toString() {
+        return "CrimeOutcomeStatus{" +
+                "category='" + category + '\'' +
+                ", date=" + date +
+                '}';
+    }
 }

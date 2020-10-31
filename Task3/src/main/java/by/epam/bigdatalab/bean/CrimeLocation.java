@@ -19,4 +19,12 @@ public class CrimeLocation {
     }
 
 
+    @Override
+    public String toString() {
+        return "CrimeLocation{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", street=" + street +
+                '}';
+    }
 }

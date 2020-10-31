@@ -13,5 +13,11 @@ public class CrimeLocationStreet {
         return name;
     }
 
-
+    @Override
+    public String toString() {
+        return "CrimeLocationStreet{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

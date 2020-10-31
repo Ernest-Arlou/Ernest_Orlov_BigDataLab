@@ -17,41 +17,18 @@ public class Crime {
     private String locationSubtype;
     private CrimeOutcomeStatus outcomeStatus;
 
-    public String getCategory() {
-        return category;
+    @Override
+    public String toString() {
+        return "Crime{" +
+                "category='" + category + '\'' + "\n" +
+                ", persistentId='" + persistentId + '\'' + "\n" +
+                ", month=" + month + "\n" +
+                ", location=" + location + "\n" +
+                ", context='" + context + '\'' + "\n" +
+                ", id=" + id + "\n" +
+                ", locationType='" + locationType + '\'' + "\n" +
+                ", locationSubtype='" + locationSubtype + '\'' + "\n" +
+                ", outcomeStatus=" + outcomeStatus + "\n" +
+                '}';
     }
-
-    public String getPersistentId() {
-        return persistentId;
-    }
-
-    public Date getMonth() {
-        return month;
-    }
-
-    public CrimeLocation getLocation() {
-        return location;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getLocationType() {
-        return locationType;
-    }
-
-    public String getLocationSubtype() {
-        return locationSubtype;
-    }
-
-    public CrimeOutcomeStatus getOutcomeStatus() {
-        return outcomeStatus;
-    }
-
-
 }
