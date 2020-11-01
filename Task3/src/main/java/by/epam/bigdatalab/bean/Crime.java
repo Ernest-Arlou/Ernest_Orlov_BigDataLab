@@ -20,15 +20,15 @@ public class Crime {
     @Override
     public String toString() {
         return "Crime{" +
-                "category='" + category + '\'' + "\n" +
-                ", persistentId='" + persistentId + '\'' + "\n" +
-                ", month=" + month + "\n" +
-                ", location=" + location + "\n" +
-                ", context='" + context + '\'' + "\n" +
-                ", id=" + id + "\n" +
-                ", locationType='" + locationType + '\'' + "\n" +
-                ", locationSubtype='" + locationSubtype + '\'' + "\n" +
-                ", outcomeStatus=" + outcomeStatus + "\n" +
+                "category='" + category + '\'' +
+                ", persistentId='" + persistentId + '\'' +
+                ", month=" + month +
+                ", location=" + location +
+                ", context='" + context + '\'' +
+                ", id=" + id +
+                ", locationType='" + locationType + '\'' +
+                ", locationSubtype='" + locationSubtype + '\'' +
+                ", outcomeStatus=" + outcomeStatus +
                 '}';
     }
 }
