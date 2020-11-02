@@ -44,6 +44,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         }
     }
 
+
     private String buildParameters(Map<String, Object> parameters) {
 //        Map<String, Object> parameters = new LinkedHashMap<>();
 

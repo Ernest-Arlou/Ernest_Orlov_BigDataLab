@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="Library" packages="by.jwd.library">
+    <Appenders>
+        <RollingFile name="RollingFile" fileName="logs/Library.log"
+                     filePattern="logs/$${date:yyyy-MM}/library-%d{dd-MM-yyyy}-%i.log">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss} %-5p %c{1} - %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <!--all, trace, debug, info, warn, error, fatal-->
+        <Logger name="by.epam.bigdatalab" level="info" additivity="false">
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+        <Logger name="by.epam.bigdatalab.dao" level="debug" additivity="false">
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
