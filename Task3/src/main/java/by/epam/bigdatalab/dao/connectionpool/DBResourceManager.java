@@ -1,4 +1,4 @@
-package by.epam.bigdatalab.dao;
+package by.epam.bigdatalab.dao.connectionpool;
 
 
 import java.util.ResourceBundle;

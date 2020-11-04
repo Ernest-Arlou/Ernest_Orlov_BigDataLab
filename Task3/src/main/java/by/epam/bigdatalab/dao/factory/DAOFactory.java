@@ -4,7 +4,7 @@ import by.epam.bigdatalab.dao.FileDAO;
 import by.epam.bigdatalab.dao.impl.FileDAOImpl;
 
 
-public class DAOFactory {
+public final class DAOFactory {
     private static volatile DAOFactory instance;
 
     private final FileDAO fileDAO = new FileDAOImpl();

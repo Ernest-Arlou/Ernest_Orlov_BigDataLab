@@ -1,6 +1,8 @@
 package by.epam.bigdatalab.service.impl;
 
 import by.epam.bigdatalab.FileException;
+import by.epam.bigdatalab.Util;
+import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.bean.Point;
 import by.epam.bigdatalab.dao.DAOException;
 import by.epam.bigdatalab.dao.factory.DAOFactory;
@@ -21,19 +23,73 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class PoliceAPIServiceImp implements PoliceAPIService {
 
     private static final String REQUEST_METHOD_GET = "GET";
-    private static final String DARE_PATTERN = "yyyy-MM";
+    private static final String DATE_PATTERN = "yyyy-MM";
     private static final String POLICE_API = "https://data.police.uk/api";
+    private static final String CRIMES_URI = "/crimes-street/all-crime";
+
 
     @Override
-    public void test(String str) throws ServiceException, FileException {
-        System.out.println(getPointsFromFile(str));
+    public void test() throws ServiceException, FileException {
+        Date date = new GregorianCalendar(2019, 4,1).getTime();
+        Date date1 = new GregorianCalendar(2019, 5,1).getTime();
+
+
+        double latitude = 52.629729;
+        double longitude = -1.131592;
+
+        Map<String,Object> stringObjectMap = new LinkedHashMap<>();
+        Map<String,Object> stringObjectMap1 = new LinkedHashMap<>();
+
+        stringObjectMap.put("lat", latitude);
+        stringObjectMap.put("lng", longitude);
+        stringObjectMap.put("date", Util.formatDate(date));
+
+
+        stringObjectMap1.put("lat", latitude);
+        stringObjectMap1.put("lng", longitude);
+        stringObjectMap1.put("date", Util.formatDate(date1));
+
+
+
+
+
+
+//        System.out.println(getPointsFromFile(str));
+
+      List<Crime> crimes = Arrays.asList( doRequest( buildURL(CRIMES_URI,stringObjectMap), Crime[].class));
+
+      List<Crime> crimes1 = Arrays.asList( doRequest( buildURL(CRIMES_URI,stringObjectMap1), Crime[].class));
+
+//        for (Crime  cr:crimes) {
+//            System.out.println(cr);
+//        }
+
+      List<Crime> unique = new ArrayList<>();
+
+        for (Crime crime:crimes) {
+            if (unique.contains(crime)){
+                System.out.println("AAAAAAA");
+            }else {
+                System.out.println(crime);
+                unique.add(crime);
+            }
+        }
+
+        for (Crime crime:crimes1) {
+            if (unique.contains(crime)){
+                System.out.println("AAAAAAA");
+            }else {
+                unique.add(crime);
+            }
+        }
+
+
+
     }
 
     private List<Point> getPointsFromFile(String path) throws ServiceException, FileException {
@@ -46,7 +102,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
 
     private String buildParameters(Map<String, Object> parameters) {
-//        Map<String, Object> parameters = new LinkedHashMap<>();
 
         Set<String> keys = parameters.keySet();
         if (keys.isEmpty()) {
@@ -100,7 +155,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
             JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
             JSON_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            JSON_MAPPER.setDateFormat(new SimpleDateFormat(DARE_PATTERN));
+            JSON_MAPPER.setDateFormat(new SimpleDateFormat(DATE_PATTERN));
             JSON_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
 

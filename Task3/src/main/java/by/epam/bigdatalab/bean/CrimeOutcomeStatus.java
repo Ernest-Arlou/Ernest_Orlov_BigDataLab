@@ -1,6 +1,7 @@
 package by.epam.bigdatalab.bean;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class CrimeOutcomeStatus {
 
@@ -15,6 +16,19 @@ public class CrimeOutcomeStatus {
         return date;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CrimeOutcomeStatus that = (CrimeOutcomeStatus) o;
+        return Objects.equals(category, that.category) &&
+                Objects.equals(date, that.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(category, date);
+    }
 
     @Override
     public String toString() {

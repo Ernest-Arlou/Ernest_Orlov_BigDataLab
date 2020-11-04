@@ -3,7 +3,7 @@ package by.epam.bigdatalab.service.factory;
 import by.epam.bigdatalab.service.PoliceAPIService;
 import by.epam.bigdatalab.service.impl.PoliceAPIServiceImp;
 
-public class ServiceFactory {
+public final class ServiceFactory {
     private static volatile ServiceFactory instance;
 
     private final PoliceAPIService policeAPIService = new PoliceAPIServiceImp();
