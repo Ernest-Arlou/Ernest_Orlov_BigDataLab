@@ -36,18 +36,18 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
     @Override
     public void test() throws ServiceException, FileException {
-        Date date = new GregorianCalendar(2019, 4, 1).getTime();
-//        Date date1 = new GregorianCalendar(2019, 5, 1).getTime();
-
-
-        double latitude = 52.629729;
-        double longitude = -1.131592;
-
-
-        Map<String, Object> stringObjectMap1 = new LinkedHashMap<>();
-        stringObjectMap1.put("lat", latitude);
-        stringObjectMap1.put("lng", longitude);
-        stringObjectMap1.put("date", Util.formatDate(date));
+//        Date date = new GregorianCalendar(2019, 4, 1).getTime();
+////        Date date1 = new GregorianCalendar(2019, 5, 1).getTime();
+//
+//
+//        double latitude = 52.629729;
+//        double longitude = -1.131592;
+//
+//
+//        Map<String, Object> stringObjectMap1 = new LinkedHashMap<>();
+//        stringObjectMap1.put("lat", latitude);
+//        stringObjectMap1.put("lng", longitude);
+//        stringObjectMap1.put("date", Util.formatDate(date));
 
 
 //        System.out.println(getPointsFromFile(str));
@@ -97,11 +97,12 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
             int i = 0;
             for (URL url : urls) {
-                List<Crime> crimes =doRequest(url, Crime.class);
+                List<Crime> crimes = doRequest(url, Crime.class);
                 System.out.println(i);
                 i++;
-//                saveCrimesInDB(crimes);
-
+                saveCrimesInDB(crimes);
+                if (i == 100)
+                    return;
 
             }
 
@@ -203,24 +204,8 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
                 InputStream inputStream = connection.getInputStream();
 
-                String str = getString(inputStream);
+                objects = JSON.parseArray(Util.getString(inputStream),type);
 
-
-
-//                objects = JSON.(str,type);
-                objects = JSON.parseArray(str,type);
-//                JSON.parseObject(inputStream, type.class);
-//                ObjectMapper JSON_MAPPER = new ObjectMapper();
-//
-//                JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-//                JSON_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//                JSON_MAPPER.setDateFormat(new SimpleDateFormat(DATE_PATTERN));
-//                JSON_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-//
-//
-//                InputStream inputStream = connection.getInputStream();
-//
-//                objects = JSON_MAPPER.readValue(inputStream, type);
 
             }
 
@@ -238,22 +223,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         return objects;
     }
 
-    private String getString(InputStream inputStream) {
-        try {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
-        }
-        return result.toString("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+
 
     private boolean gotConnection(HttpURLConnection connection) throws ServiceException {
         int responseCode = 0;
