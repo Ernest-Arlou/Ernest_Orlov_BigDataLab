@@ -17,7 +17,7 @@ public class FileDAOImpl implements FileDAO {
 
 
     @Override
-    public List<Point> getPoints(String path) throws DAOException, FileException {
+    public List<Point> getPoints(String path) throws DAOException {
 
         List<Point> points = new ArrayList<>();
 

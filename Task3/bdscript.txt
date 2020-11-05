@@ -1,8 +1,8 @@
--- Database: crimes
+-- Database: Crimes
 
--- DROP DATABASE crimes;
+-- DROP DATABASE Crimes;
 
-CREATE DATABASE crimes
+CREATE DATABASE Crimes
     WITH 
     OWNER = postgres
     ENCODING = 'UTF8'

@@ -5,6 +5,7 @@ import java.util.Objects;
 
 public class CrimeOutcomeStatus {
 
+    private  int id;
     private String category;
     private Date date;
 
@@ -14,6 +15,34 @@ public class CrimeOutcomeStatus {
 
     public Date getDate() {
         return date;
+    }
+
+    public CrimeOutcomeStatus(){
+        id = -1;
+        category = "category";
+        date = new Date();
+    }
+
+    public CrimeOutcomeStatus(int id, String category, Date date){
+        this.id = id;
+        this.category = category;
+        this.date = date;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override

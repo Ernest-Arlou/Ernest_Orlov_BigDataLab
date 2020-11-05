@@ -14,6 +14,7 @@ public final class HikariConnectionPoolImpl implements ConnectionPool {
 
     private HikariDataSource hikariDataSource;
 
+    @Override
     public void init() {
 
         Properties props = new Properties();
@@ -29,25 +30,30 @@ public final class HikariConnectionPoolImpl implements ConnectionPool {
 
     }
 
+    @Override
+    public HikariDataSource getSource (){
+        return hikariDataSource;
+    }
+
+    @Override
     public void dispose() {
         hikariDataSource.close();
     }
 
-    public Connection getConnection(){
-        Connection connection = null;
-        try {
-            connection = hikariDataSource.getConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return connection;
-    }
+//    public Connection getConnection(){
+//        Connection connection = null;
+//        try {
+//            connection = hikariDataSource.getConnection();
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }
+//        return connection;
+//    }
+//
+//    public void closeConnection(Connection connection){
+//        hikariDataSource.evictConnection(connection);
+//    }
 
-    public void closeConnection(Connection connection){
-        hikariDataSource.evictConnection(connection);
-    }
 
-    private HikariConnectionPoolImpl() {
-    }
 
 }

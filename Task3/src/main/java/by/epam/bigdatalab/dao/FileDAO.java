@@ -6,5 +6,5 @@ import by.epam.bigdatalab.bean.Point;
 import java.util.List;
 
 public interface FileDAO {
-    List<Point> getPoints(String path) throws DAOException, FileException;
+    List<Point> getPoints(String path) throws DAOException;
 }

@@ -31,64 +31,83 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
     private static final String DATE_PATTERN = "yyyy-MM";
     private static final String POLICE_API = "https://data.police.uk/api";
     private static final String CRIMES_URI = "/crimes-street/all-crime";
+    private static final int CONNECTION_TIMEOUT = 6000;
+    private static final int CONNECTION_READ_TIMEOUT = 6000;
+
 
 
     @Override
     public void test() throws ServiceException, FileException {
-        Date date = new GregorianCalendar(2019, 4,1).getTime();
-        Date date1 = new GregorianCalendar(2019, 5,1).getTime();
+        Date date = new GregorianCalendar(2019, 4, 1).getTime();
+//        Date date1 = new GregorianCalendar(2019, 5, 1).getTime();
 
 
         double latitude = 52.629729;
         double longitude = -1.131592;
 
-        Map<String,Object> stringObjectMap = new LinkedHashMap<>();
-        Map<String,Object> stringObjectMap1 = new LinkedHashMap<>();
+        Map<String, Object> stringObjectMap = new LinkedHashMap<>();
+//        Map<String, Object> stringObjectMap1 = new LinkedHashMap<>();
 
         stringObjectMap.put("lat", latitude);
         stringObjectMap.put("lng", longitude);
         stringObjectMap.put("date", Util.formatDate(date));
 
-
-        stringObjectMap1.put("lat", latitude);
-        stringObjectMap1.put("lng", longitude);
-        stringObjectMap1.put("date", Util.formatDate(date1));
-
-
-
-
+//
+//        stringObjectMap1.put("lat", latitude);
+//        stringObjectMap1.put("lng", longitude);
+//        stringObjectMap1.put("date", Util.formatDate(date1));
 
 
 //        System.out.println(getPointsFromFile(str));
 
-      List<Crime> crimes = Arrays.asList( doRequest( buildURL(CRIMES_URI,stringObjectMap), Crime[].class));
+        List<Crime> crimes = Arrays.asList(doRequest(buildURL(CRIMES_URI, stringObjectMap), Crime[].class));
 
-      List<Crime> crimes1 = Arrays.asList( doRequest( buildURL(CRIMES_URI,stringObjectMap1), Crime[].class));
+//        List<Crime> crimes1 = Arrays.asList(doRequest(buildURL(CRIMES_URI, stringObjectMap1), Crime[].class));
 
 //        for (Crime  cr:crimes) {
-//            System.out.println(cr);
+//            System.out.println(cr.getOutcomeStatus());
 //        }
 
-      List<Crime> unique = new ArrayList<>();
+//        for (int i = 0; i < crimes.size(); i++) {
+//            System.out.print(i+ "  ");
+//            System.out.println(crimes.get(i).getOutcomeStatus());
+//        }
+//
+//        System.out.println(crimes.size());
 
-        for (Crime crime:crimes) {
-            if (unique.contains(crime)){
-                System.out.println("AAAAAAA");
-            }else {
-                System.out.println(crime);
-                unique.add(crime);
+
+        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(crimes);
+
+
+    }
+
+    private void saveCrimesInDB(List<Crime> crimes) throws ServiceException {
+
+    }
+
+
+
+
+
+
+
+    public void saveCrimesInDB11(String path) throws ServiceException {
+        List<Point> points = null;
+        try {
+            points = DAOFactory.getInstance().getFileDAO().getPoints(path);
+            if (points == null){
+                throw new ServiceException("No points in file");
             }
+
+
+
+
+
+
+
+        } catch (DAOException e) {
+            throw new ServiceException("DAOException in getPointsFromFile", e);
         }
-
-        for (Crime crime:crimes1) {
-            if (unique.contains(crime)){
-                System.out.println("AAAAAAA");
-            }else {
-                unique.add(crime);
-            }
-        }
-
-
 
     }
 
@@ -145,23 +164,23 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(REQUEST_METHOD_GET);
-            connection.setConnectTimeout(6000);
-            connection.setReadTimeout(6000);
+            connection.setConnectTimeout(CONNECTION_TIMEOUT);
+            connection.setReadTimeout(CONNECTION_READ_TIMEOUT);
 
-            checkResponseStatus(connection);
+            if (gotConnection(connection)) {
+                ObjectMapper JSON_MAPPER = new ObjectMapper();
 
-
-            ObjectMapper JSON_MAPPER = new ObjectMapper();
-
-            JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-            JSON_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            JSON_MAPPER.setDateFormat(new SimpleDateFormat(DATE_PATTERN));
-            JSON_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+                JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+                JSON_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                JSON_MAPPER.setDateFormat(new SimpleDateFormat(DATE_PATTERN));
+                JSON_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
 
-            InputStream inputStream = connection.getInputStream();
+                InputStream inputStream = connection.getInputStream();
 
-            objects = JSON_MAPPER.readValue(inputStream, type);
+                objects = JSON_MAPPER.readValue(inputStream, type);
+
+            }
 
 
         } catch (ProtocolException e) {
@@ -182,20 +201,30 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
     }
 
 
-    private void checkResponseStatus(HttpURLConnection connection) throws ServiceException {
+    private boolean gotConnection(HttpURLConnection connection) throws ServiceException {
         int responseCode = 0;
         try {
             responseCode = connection.getResponseCode();
         } catch (IOException e) {
-            throw new ServiceException("IOException in checkResponseStatus", e);
+            throw new ServiceException("IOException in gotConnection", e);
         }
 
-        if (responseCode != 200) {
-            throw new ServiceException("Error retreiving resource " +
-                    "(" + connection.getURL() + ") " +
-                    "(" + responseCode + ")"
-            );
+        if (responseCode == 200) {
+            return true;
         }
+
+        if (responseCode == 404) {
+            return false;
+        }
+
+        if (responseCode >= 500) {
+            return false;
+        }
+
+        throw new ServiceException("Error retreiving resource " +
+                "(" + connection.getURL() + ") " +
+                "(" + responseCode + ")"
+        );
 
     }
 

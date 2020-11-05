@@ -1,3 +1,19 @@
+-- Database: crimes
+
+-- DROP DATABASE crimes;
+
+CREATE DATABASE crimes
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Russian_Russia.1251'
+    LC_CTYPE = 'Russian_Russia.1251'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+	
+	
+	
+	
 -- Table: public.Street
 
 -- DROP TABLE public."Street";
@@ -50,27 +66,27 @@ ALTER TABLE public."Location"
 	
 	
 	
--- Table: public.Outcome-status
+-- Table: public.Outcome-Status
 
--- DROP TABLE public."Outcome-status";
-CREATE SEQUENCE "Outcome-status_id_seq";
+-- DROP TABLE public."Outcome-Status";
+CREATE SEQUENCE "Outcome-Status_id_seq";
 
-CREATE TABLE public."Outcome-status"
+CREATE TABLE public."Outcome-Status"
 (
-    id bigint NOT NULL DEFAULT nextval('"Outcome-status_id_seq"'),
+    id bigint NOT NULL DEFAULT nextval('"Outcome-Status_id_seq"'),
     category character varying COLLATE pg_catalog."default" NOT NULL,
     date date NOT NULL,
-    CONSTRAINT "Outcome-status_pkey" PRIMARY KEY (id)
+    CONSTRAINT "Outcome-Status_pkey" PRIMARY KEY (id)
 )
 WITH (
     OIDS = FALSE
 )
 TABLESPACE pg_default;
 
-ALTER SEQUENCE "Outcome-status_id_seq"
-OWNED BY "Outcome-status".id;
+ALTER SEQUENCE "Outcome-Status_id_seq"
+OWNED BY "Outcome-Status".id;
 
-ALTER TABLE public."Outcome-status"
+ALTER TABLE public."Outcome-Status"
     OWNER to postgres;
 	
 	
@@ -90,16 +106,16 @@ CREATE TABLE public."Crimes"
     "location-subtype" character varying COLLATE pg_catalog."default" NOT NULL,
     "location-type" character varying COLLATE pg_catalog."default" NOT NULL,
     month date NOT NULL,
-    "persistent-id" character varying COLLATE pg_catalog."default" NOT NULL,
+    "presistent-id" character varying COLLATE pg_catalog."default" NOT NULL,
 	"location-id" bigint NOT NULL,
-	"outcome-status-id" bigint,
+	"outcome-status-id" bigint NOT NULL,
     CONSTRAINT Crimes_pkey PRIMARY KEY (id),
 	CONSTRAINT "location-id" FOREIGN KEY ("location-id")
         REFERENCES public."Location" (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
 	CONSTRAINT "outcome-status-id" FOREIGN KEY ("outcome-status-id")
-        REFERENCES public."Outcome-status" (id) MATCH SIMPLE
+        REFERENCES public."Outcome-Status" (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )

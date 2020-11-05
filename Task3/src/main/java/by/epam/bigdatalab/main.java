@@ -1,22 +1,54 @@
 package by.epam.bigdatalab;
 
 
+import by.epam.bigdatalab.bean.CrimeLocation;
+import by.epam.bigdatalab.bean.CrimeLocationStreet;
+import by.epam.bigdatalab.dao.connectionpool.ConnectionPool;
+import by.epam.bigdatalab.dao.connectionpool.factory.ConnectionPoolFactory;
+import by.epam.bigdatalab.dao.factory.DAOFactory;
 import by.epam.bigdatalab.service.factory.ServiceFactory;
+import org.codejargon.fluentjdbc.api.FluentJdbc;
+import org.codejargon.fluentjdbc.api.FluentJdbcBuilder;
+import org.codejargon.fluentjdbc.api.query.Query;
+
+import javax.sql.DataSource;
+import java.util.List;
 
 public class main {
 
 
     public static void main(String[] args) throws Exception {
 
-//        ServiceFactory.getInstance().getPoliceAPIService().test();
 
 
+        ConnectionPoolFactory.getInstance().getConnectionPool().init();
+
+        ServiceFactory.getInstance().getPoliceAPIService().test();
+
+//        DAOFactory.getInstance().getDataBaseDAO().saveCrimes(null);
+//
 
 
+//        DataSource dataSource = ConnectionPoolFactory.getInstance().getConnectionPool().getSource();
+//        FluentJdbc fluentJdbc = new FluentJdbcBuilder()
+//                .connectionProvider(dataSource)
+//                .build();
+//        Query query = fluentJdbc.query();
 
 
+//
+//        List<CrimeLocationStreet> customers = query.select("SELECT * FROM \"Street\"")
+//                .listResult(resultSet -> new CrimeLocationStreet(resultSet.getInt("id"),resultSet.getString("name")));
+//
+//        System.out.println(customers);
 
 
+//        query.update("INSERT INTO \"Street\"(id, name) values(?,?)")
+//                .params(5,"name5")
+//        .run();
+
+
+        ConnectionPoolFactory.getInstance().getConnectionPool().dispose();
 
 
 

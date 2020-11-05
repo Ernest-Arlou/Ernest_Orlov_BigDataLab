@@ -42,9 +42,11 @@
             <version>42.2.18</version>
         </dependency>
 
-
-
-
+        <dependency>
+            <groupId>org.codejargon</groupId>
+            <artifactId>fluentjdbc</artifactId>
+            <version>1.8.3</version>
+        </dependency>
 
         <!--    logger-->
         <dependency>
@@ -64,10 +66,7 @@
             <artifactId>log4j-api</artifactId>
             <version>2.11.2</version>
         </dependency>
-
         <!--    logger-->
-
-
 
     </dependencies>
 

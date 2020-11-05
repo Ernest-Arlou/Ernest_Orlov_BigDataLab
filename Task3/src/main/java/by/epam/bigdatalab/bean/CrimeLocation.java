@@ -4,20 +4,55 @@ import java.util.Objects;
 
 public class CrimeLocation {
 
-    private Double latitude;
-    private Double longitude;
+    private int id;
+    private double latitude;
+    private double longitude;
     private CrimeLocationStreet street;
 
-    public Double getLatitude() {
+    public CrimeLocation(){
+        id = -1;
+        latitude = 1.;
+        longitude = 1.;
+        street = new CrimeLocationStreet();
+    }
+
+    public CrimeLocation(int id, Double latitude, Double longitude, CrimeLocationStreet street){
+        this.id = id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.street = street;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public double getLatitude() {
         return latitude;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
     public CrimeLocationStreet getStreet() {
         return street;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setStreet(CrimeLocationStreet street) {
+        this.street = street;
     }
 
     @Override
