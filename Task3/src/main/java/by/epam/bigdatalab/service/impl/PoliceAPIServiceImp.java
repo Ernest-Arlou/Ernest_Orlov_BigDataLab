@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 public class PoliceAPIServiceImp implements PoliceAPIService {
@@ -33,7 +34,9 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
     private static final String CRIMES_URI = "/crimes-street/all-crime";
     private static final int CONNECTION_TIMEOUT = 6000;
     private static final int CONNECTION_READ_TIMEOUT = 6000;
-
+    private static final String PARAMETER_LATITUDE = "lat";
+    private static final String PARAMETER_LONGITUDE = "lng";
+    private static final String PARAMETER_DATE = "date";
 
 
     @Override
@@ -45,12 +48,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         double latitude = 52.629729;
         double longitude = -1.131592;
 
-        Map<String, Object> stringObjectMap = new LinkedHashMap<>();
-//        Map<String, Object> stringObjectMap1 = new LinkedHashMap<>();
-
-        stringObjectMap.put("lat", latitude);
-        stringObjectMap.put("lng", longitude);
-        stringObjectMap.put("date", Util.formatDate(date));
 
 //
 //        stringObjectMap1.put("lat", latitude);
@@ -60,7 +57,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
 //        System.out.println(getPointsFromFile(str));
 
-        List<Crime> crimes = Arrays.asList(doRequest(buildURL(CRIMES_URI, stringObjectMap), Crime[].class));
+//        List<Crime> crimes = Arrays.asList(doRequest(buildURL(CRIMES_URI, stringObjectMap), Crime[].class));
 
 //        List<Crime> crimes1 = Arrays.asList(doRequest(buildURL(CRIMES_URI, stringObjectMap1), Crime[].class));
 
@@ -76,33 +73,42 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 //        System.out.println(crimes.size());
 
 
-        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(crimes);
+//        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(crimes);
+
+        LocalDate start = LocalDate.of(2018, 1, 1);
+        LocalDate end = LocalDate.of(2018, 1, 1);
+
+        String path = "E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv";
+
+
+        processCrimes(start,end,path);
+
 
 
     }
 
-    private void saveCrimesInDB(List<Crime> crimes) throws ServiceException {
-
-    }
-
-
-
-
-
-
-
-    public void saveCrimesInDB11(String path) throws ServiceException {
+    public void processCrimes(LocalDate startDate, LocalDate endDate, String path) throws ServiceException {
         List<Point> points = null;
         try {
             points = DAOFactory.getInstance().getFileDAO().getPoints(path);
-            if (points == null){
+            if (points == null) {
                 throw new ServiceException("No points in file");
             }
 
+            List<LocalDate> localDates = buildDateRange(startDate, endDate);
+            List<URL> urls = buildURLs(localDates, points);
+
+            System.out.println(urls.size());
+
+            int i = 0;
+            for (URL url : urls) {
+                List<Crime> crimes = Arrays.asList(doRequest(url, Crime[].class));
+                System.out.println(i);
+                i++;
+//                saveCrimesInDB(crimes);
 
 
-
-
+            }
 
 
         } catch (DAOException e) {
@@ -110,6 +116,37 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         }
 
     }
+
+    private void saveCrimesInDB(List<Crime> crimes) throws ServiceException {
+        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(crimes);
+
+    }
+
+    private List<LocalDate> buildDateRange(LocalDate startDate, LocalDate endDate) {
+        List<LocalDate> localDates = new ArrayList<>();
+        if (startDate.compareTo(endDate) < 1) {
+            do {
+                localDates.add(startDate);
+                startDate = startDate.plusMonths(1);
+            } while (startDate.compareTo(endDate) < 1);
+        }
+        return localDates;
+    }
+
+    private List<URL> buildURLs(List<LocalDate> dates, List<Point> points) throws ServiceException {
+        List<URL> urls = new ArrayList<>();
+        for (LocalDate localDate : dates) {
+            for (Point point : points) {
+                Map<String, Object> parameters = new LinkedHashMap<>();
+                parameters.put(PARAMETER_LATITUDE, point.getLatitude());
+                parameters.put(PARAMETER_LONGITUDE, point.getLongitude());
+                parameters.put(PARAMETER_DATE, Util.formatDate(localDate));
+                urls.add(buildURL(CRIMES_URI, parameters));
+            }
+        }
+        return urls;
+    }
+
 
     private List<Point> getPointsFromFile(String path) throws ServiceException, FileException {
         try {
