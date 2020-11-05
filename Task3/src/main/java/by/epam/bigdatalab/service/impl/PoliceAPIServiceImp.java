@@ -9,6 +9,8 @@ import by.epam.bigdatalab.dao.factory.DAOFactory;
 import by.epam.bigdatalab.service.PoliceAPIService;
 import by.epam.bigdatalab.service.ServiceException;
 import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,38 +33,22 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
     private static final String PARAMETER_LONGITUDE = "lng";
     private static final String PARAMETER_DATE = "date";
 
+    private static final Logger logger = LoggerFactory.getLogger(PoliceAPIServiceImp.class);
+
 
     @Override
     public void test() throws ServiceException, FileException {
 
+
+        testOnePoint();
 //
-
-
-//        System.out.println(crimes);
-
-//        List<Crime> crimes1 = Arrays.asList(doRequest(buildURL(CRIMES_URI, stringObjectMap1), Crime[].class));
-
-//        for (Crime  cr:crimes) {
-//            System.out.println(cr.getOutcomeStatus());
-//        }
-
-//        for (int i = 0; i < crimes.size(); i++) {
-//            System.out.print(i+ "  ");
-//            System.out.println(crimes.get(i).getOutcomeStatus());
-//        }
+//        LocalDate start = LocalDate.of(2018, 1, 1);
+//        LocalDate end = LocalDate.of(2018, 1, 1);
 //
-//        System.out.println(crimes.size());
-
-
-//        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(crimes);
-
-        LocalDate start = LocalDate.of(2018, 1, 1);
-        LocalDate end = LocalDate.of(2018, 1, 1);
-
-        String path = "E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv";
-
-
-        processCrimes(start, end, path);
+//        String path = "E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv";
+//
+//
+//        processCrimes(start, end, path);
 
 
     }
@@ -94,6 +80,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         try {
             points = DAOFactory.getInstance().getFileDAO().getPoints(path);
             if (points == null) {
+                logger.error("No points in file in PoliceAPIServiceImp method processCrimes()");
                 throw new ServiceException("No points in file");
             }
 
@@ -115,6 +102,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
 
         } catch (DAOException e) {
+            logger.error("DAOException in PoliceAPIServiceImp method processCrimes()");
             throw new ServiceException("DAOException in getPointsFromFile", e);
         }
 
@@ -155,6 +143,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         try {
             return DAOFactory.getInstance().getFileDAO().getPoints(path);
         } catch (DAOException e) {
+            logger.error("DAOException in PoliceAPIServiceImp method processCrimes()");
             throw new ServiceException("DAOException in getPointsFromFile", e);
         }
     }
@@ -187,6 +176,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
             url = new URL(urlStr);
 
         } catch (MalformedURLException e) {
+            logger.error("MalformedURLException in PoliceAPIServiceImp method buildURL()");
             throw new ServiceException("MalformedURLException in buildURL", e);
         }
         return url;
@@ -214,8 +204,10 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
 
         } catch (ProtocolException e) {
+            logger.error("ProtocolException in PoliceAPIServiceImp method doRequest()");
             throw new ServiceException("ProtocolException in doRequest", e);
         } catch (IOException e) {
+            logger.error("IOException in PoliceAPIServiceImp method doRequest()");
             throw new ServiceException("IOException in doRequest", e);
         } finally {
             if (connection != null) {
@@ -232,6 +224,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         try {
             responseCode = connection.getResponseCode();
         } catch (IOException e) {
+            logger.error("IOException in PoliceAPIServiceImp method gotConnection()");
             throw new ServiceException("IOException in gotConnection", e);
         }
 
@@ -247,10 +240,12 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
             return false;
         }
 
-        throw new ServiceException("Error retreiving resource " +
+        String errorStr = "Error retreiving resource " +
                 "(" + connection.getURL() + ") " +
-                "(" + responseCode + ")"
-        );
+                "(" + responseCode + ")";
+
+        logger.error("Error in PoliceAPIServiceImp method gotConnection() - " + errorStr);
+        throw new ServiceException(errorStr);
 
     }
 

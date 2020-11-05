@@ -38,19 +38,6 @@ public final class HikariConnectionPoolImpl implements ConnectionPool {
         hikariDataSource.close();
     }
 
-//    public Connection getConnection(){
-//        Connection connection = null;
-//        try {
-//            connection = hikariDataSource.getConnection();
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//        return connection;
-//    }
-//
-//    public void closeConnection(Connection connection){
-//        hikariDataSource.evictConnection(connection);
-//    }
 
 
 }
