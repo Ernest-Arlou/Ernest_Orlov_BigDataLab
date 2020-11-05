@@ -1,14 +1,19 @@
 package by.epam.bigdatalab.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Objects;
 
 public class CrimeLocationStreet {
 
+    @JSONField(name = "id")
     private long id;
+
+    @JSONField(name = "name")
     private String name;
 
     public CrimeLocationStreet(){
-        id = Long.valueOf(-1);
+        id = (long) -1;
         name = "name";
     }
 

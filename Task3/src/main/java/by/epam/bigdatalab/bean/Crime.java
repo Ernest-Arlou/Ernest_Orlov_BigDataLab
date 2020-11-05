@@ -1,20 +1,38 @@
 package by.epam.bigdatalab.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.Objects;
 
 
 public class Crime {
 
+    @JSONField(name = "id")
     private int id;
+
+    @JSONField(name = "category")
     private String category;
+
+    @JSONField(name = "persistent_id")
     private String persistentId;
+
+    @JSONField(name = "month", format="yyyy-MM")
     private Date month;
+
+    @JSONField(name = "context")
     private String context;
+
+    @JSONField(name = "location_type")
     private String locationType;
+
+    @JSONField(name = "location_type")
     private String locationSubtype;
 
+    @JSONField(name = "location")
     private CrimeLocation location;
+
+    @JSONField(name = "outcome_status")
     private CrimeOutcomeStatus outcomeStatus;
 
     public Crime(){

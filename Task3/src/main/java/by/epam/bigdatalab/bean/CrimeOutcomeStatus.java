@@ -1,12 +1,18 @@
 package by.epam.bigdatalab.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.Objects;
 
 public class CrimeOutcomeStatus {
 
     private  int id;
+
+    @JSONField(name = "category")
     private String category;
+
+    @JSONField(name = "date", format="yyyy-MM")
     private Date date;
 
     public String getCategory() {

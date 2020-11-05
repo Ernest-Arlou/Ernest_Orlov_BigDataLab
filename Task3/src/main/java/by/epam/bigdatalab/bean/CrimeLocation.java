@@ -1,12 +1,20 @@
 package by.epam.bigdatalab.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Objects;
 
 public class CrimeLocation {
 
     private int id;
+
+    @JSONField(name = "latitude")
     private double latitude;
+
+    @JSONField(name = "latitude")
     private double longitude;
+
+    @JSONField(name = "street")
     private CrimeLocationStreet street;
 
     public CrimeLocation(){
