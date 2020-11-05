@@ -6,8 +6,6 @@ import by.epam.bigdatalab.dao.connectionpool.DBResourceManager;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 
 public final class HikariConnectionPoolImpl implements ConnectionPool {
@@ -31,7 +29,7 @@ public final class HikariConnectionPoolImpl implements ConnectionPool {
     }
 
     @Override
-    public HikariDataSource getSource (){
+    public HikariDataSource getSource() {
         return hikariDataSource;
     }
 
@@ -53,7 +51,6 @@ public final class HikariConnectionPoolImpl implements ConnectionPool {
 //    public void closeConnection(Connection connection){
 //        hikariDataSource.evictConnection(connection);
 //    }
-
 
 
 }

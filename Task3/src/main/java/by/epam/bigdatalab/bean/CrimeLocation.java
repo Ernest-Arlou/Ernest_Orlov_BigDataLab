@@ -6,36 +6,36 @@ import java.util.Objects;
 
 public class CrimeLocation {
 
-    private int id;
+    private long id;
 
     @JSONField(name = "latitude")
     private double latitude;
 
-    @JSONField(name = "latitude")
+    @JSONField(name = "longitude")
     private double longitude;
 
     @JSONField(name = "street")
     private CrimeLocationStreet street;
 
-    public CrimeLocation(){
+    public CrimeLocation() {
         id = -1;
         latitude = 1.;
         longitude = 1.;
         street = new CrimeLocationStreet();
     }
 
-    public CrimeLocation(int id, Double latitude, Double longitude, CrimeLocationStreet street){
+    public CrimeLocation(long id, Double latitude, Double longitude, CrimeLocationStreet street) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.street = street;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -43,20 +43,20 @@ public class CrimeLocation {
         return latitude;
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public CrimeLocationStreet getStreet() {
-        return street;
-    }
-
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
+    public double getLongitude() {
+        return longitude;
+    }
+
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public CrimeLocationStreet getStreet() {
+        return street;
     }
 
     public void setStreet(CrimeLocationStreet street) {
@@ -68,6 +68,11 @@ public class CrimeLocation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CrimeLocation that = (CrimeLocation) o;
+
+//        System.out.println(Objects.equals(latitude, that.latitude));
+//        System.out.println(Objects.equals(longitude, that.longitude));
+//        System.out.println(Objects.equals(street, that.street));
+
         return Objects.equals(latitude, that.latitude) &&
                 Objects.equals(longitude, that.longitude) &&
                 Objects.equals(street, that.street);

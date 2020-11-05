@@ -1,6 +1,5 @@
 package by.epam.bigdatalab.dao.impl;
 
-import by.epam.bigdatalab.FileException;
 import by.epam.bigdatalab.bean.Point;
 import by.epam.bigdatalab.dao.DAOException;
 import by.epam.bigdatalab.dao.FileDAO;
@@ -12,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileDAOImpl implements FileDAO {
-    private static final String CSV_SPLITTER =  ",";
-    private static final String CSV_HEADER =  "name,longitude,latitude";
+    private static final String CSV_SPLITTER = ",";
+    private static final String CSV_HEADER = "name,longitude,latitude";
 
 
     @Override
@@ -36,7 +35,7 @@ public class FileDAOImpl implements FileDAO {
                 }
             }
         } catch (IOException e) {
-           throw new DAOException("Problem with file",e);
+            throw new DAOException("Problem with file", e);
         }
 
         return points;

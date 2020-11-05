@@ -10,10 +10,8 @@ import by.epam.bigdatalab.service.PoliceAPIService;
 import by.epam.bigdatalab.service.ServiceException;
 import com.alibaba.fastjson.JSON;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -36,23 +34,10 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
     @Override
     public void test() throws ServiceException, FileException {
-//        Date date = new GregorianCalendar(2019, 4, 1).getTime();
-////        Date date1 = new GregorianCalendar(2019, 5, 1).getTime();
+
 //
-//
-//        double latitude = 52.629729;
-//        double longitude = -1.131592;
-//
-//
-//        Map<String, Object> stringObjectMap1 = new LinkedHashMap<>();
-//        stringObjectMap1.put("lat", latitude);
-//        stringObjectMap1.put("lng", longitude);
-//        stringObjectMap1.put("date", Util.formatDate(date));
 
 
-//        System.out.println(getPointsFromFile(str));
-
-//        List<Crime> crimes =doRequest(buildURL(CRIMES_URI, stringObjectMap1), Crime.class);
 //        System.out.println(crimes);
 
 //        List<Crime> crimes1 = Arrays.asList(doRequest(buildURL(CRIMES_URI, stringObjectMap1), Crime[].class));
@@ -77,11 +62,33 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         String path = "E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv";
 
 
-        processCrimes(start,end,path);
+        processCrimes(start, end, path);
 
 
     }
 
+    private void testOnePoint() throws ServiceException {
+
+        Date date = new GregorianCalendar(2019, 4, 1).getTime();
+
+        double latitude = 52.629729;
+        double longitude = -1.131592;
+
+
+        Map<String, Object> stringObjectMap1 = new LinkedHashMap<>();
+        stringObjectMap1.put("lat", latitude);
+        stringObjectMap1.put("lng", longitude);
+        stringObjectMap1.put("date", Util.formatDate(date));
+
+
+        List<Crime> crimes = doRequest(buildURL(CRIMES_URI, stringObjectMap1), Crime.class);
+
+        saveCrimesInDB(crimes);
+
+    }
+
+
+    @Override
     public void processCrimes(LocalDate startDate, LocalDate endDate, String path) throws ServiceException {
         List<Point> points = null;
         try {
@@ -101,7 +108,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
                 System.out.println(i);
                 i++;
                 saveCrimesInDB(crimes);
-                if (i == 100)
+                if (i == 40)
                     return;
 
             }
@@ -113,7 +120,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
     }
 
-    private void saveCrimesInDB(List<Crime> crimes) throws ServiceException {
+    private void saveCrimesInDB(List<Crime> crimes) {
         DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(crimes);
 
     }
@@ -187,8 +194,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
 
     private <T> List<T> doRequest(URL url, Class<T> type) throws ServiceException {
-
-
         HttpURLConnection connection = null;
 
         List<T> objects = null;
@@ -196,16 +201,14 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         try {
 
             connection = (HttpURLConnection) url.openConnection();
-//            connection.setRequestMethod(REQUEST_METHOD_GET);
-//            connection.setConnectTimeout(CONNECTION_TIMEOUT);
-//            connection.setReadTimeout(CONNECTION_READ_TIMEOUT);
+            connection.setConnectTimeout(CONNECTION_TIMEOUT);
+            connection.setReadTimeout(CONNECTION_READ_TIMEOUT);
 
             if (gotConnection(connection)) {
 
                 InputStream inputStream = connection.getInputStream();
 
-                objects = JSON.parseArray(Util.getString(inputStream),type);
-
+                objects = JSON.parseArray(Util.getString(inputStream), type);
 
             }
 
@@ -222,7 +225,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
         return objects;
     }
-
 
 
     private boolean gotConnection(HttpURLConnection connection) throws ServiceException {
