@@ -1,23 +1,42 @@
 package by.epam.bigdatalab.bean;
 
+import by.epam.bigdatalab.Util;
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.Objects;
 
 
 public class Crime {
 
-    private int id;
+    @JSONField(name = "id")
+    private long id;
+
+    @JSONField(name = "category")
     private String category;
+
+    @JSONField(name = "persistent_id")
     private String persistentId;
+
+    @JSONField(name = "month", format = "yyyy-MM")
     private Date month;
+
+    @JSONField(name = "context")
     private String context;
+
+    @JSONField(name = "location_type")
     private String locationType;
+
+    @JSONField(name = "location_type")
     private String locationSubtype;
 
+    @JSONField(name = "location")
     private CrimeLocation location;
+
+    @JSONField(name = "outcome_status")
     private CrimeOutcomeStatus outcomeStatus;
 
-    public Crime(){
+    public Crime() {
         id = -1;
         category = "category";
         persistentId = "persistentId";
@@ -31,9 +50,9 @@ public class Crime {
         outcomeStatus = new CrimeOutcomeStatus();
     }
 
-    public Crime(int id, String category, String persistentId, Date month,
+    public Crime(long id, String category, String persistentId, Date month,
                  String context, String locationType, String locationSubtype,
-                 CrimeLocation location, CrimeOutcomeStatus crimeOutcomeStatus){
+                 CrimeLocation location, CrimeOutcomeStatus crimeOutcomeStatus) {
         this.id = id;
         this.category = category;
         this.persistentId = persistentId;
@@ -78,11 +97,11 @@ public class Crime {
         this.context = context;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -143,7 +162,7 @@ public class Crime {
         return "Crime{" +
                 "category='" + category + '\'' +
                 ", persistentId='" + persistentId + '\'' +
-                ", month=" + month +
+                ", month=" + Util.formatDate(month) +
                 ", location=" + location +
                 ", context='" + context + '\'' +
                 ", id=" + id +

@@ -1,48 +1,55 @@
 package by.epam.bigdatalab.bean;
 
+import by.epam.bigdatalab.Util;
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 import java.util.Objects;
 
 public class CrimeOutcomeStatus {
 
-    private  int id;
+    private long id;
+
+    @JSONField(name = "category")
     private String category;
+
+    @JSONField(name = "date", format = "yyyy-MM")
     private Date date;
 
-    public String getCategory() {
-        return category;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public CrimeOutcomeStatus(){
+    public CrimeOutcomeStatus() {
         id = -1;
         category = "category";
         date = new Date();
     }
 
-    public CrimeOutcomeStatus(int id, String category, Date date){
+    public CrimeOutcomeStatus(long id, String category, Date date) {
         this.id = id;
         this.category = category;
         this.date = date;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public String getCategory() {
+        return category;
     }
 
     public void setCategory(String category) {
         this.category = category;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
@@ -63,7 +70,7 @@ public class CrimeOutcomeStatus {
     public String toString() {
         return "CrimeOutcomeStatus{" +
                 "category='" + category + '\'' +
-                ", date=" + date +
+                ", date=" + Util.formatDate(date) +
                 '}';
     }
 }
