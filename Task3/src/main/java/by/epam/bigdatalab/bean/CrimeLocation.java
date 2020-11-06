@@ -69,10 +69,6 @@ public class CrimeLocation {
         if (o == null || getClass() != o.getClass()) return false;
         CrimeLocation that = (CrimeLocation) o;
 
-//        System.out.println(Objects.equals(latitude, that.latitude));
-//        System.out.println(Objects.equals(longitude, that.longitude));
-//        System.out.println(Objects.equals(street, that.street));
-
         return Objects.equals(latitude, that.latitude) &&
                 Objects.equals(longitude, that.longitude) &&
                 Objects.equals(street, that.street);

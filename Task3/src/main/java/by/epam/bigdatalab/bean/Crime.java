@@ -142,19 +142,6 @@ public class Crime {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Crime crime = (Crime) o;
-//        System.out.println("------------------------------------------------------------");
-//        System.out.println(id == crime.id);
-//        System.out.println(category.equals(crime.category));
-//        System.out.println(persistentId.equals(crime.persistentId));
-//        System.out.println(context.equals(crime.context));
-//        System.out.println(locationType);
-//        System.out.println(crime.locationType);
-//        System.out.println(locationType.equals(crime.locationType));
-//        System.out.println(locationSubtype.equals(crime.locationSubtype));
-//        System.out.println(month.equals(crime.month));
-//        System.out.println(Objects.equals(location, crime.location));
-//        System.out.println(Objects.equals(outcomeStatus, crime.outcomeStatus));
-//
 
         return id == crime.id &&
                 category.equals(crime.category) &&

@@ -1,11 +1,13 @@
 package by.epam.bigdatalab;
 
 
+import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.dao.connectionpool.factory.ConnectionPoolFactory;
 import by.epam.bigdatalab.service.factory.ServiceFactory;
 import org.apache.commons.cli.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Properties;
 
 public class main {
