@@ -27,7 +27,7 @@ public class Crime {
     @JSONField(name = "location_type")
     private String locationType;
 
-    @JSONField(name = "location_type")
+    @JSONField(name = "location_subtype")
     private String locationSubtype;
 
     @JSONField(name = "location")
@@ -142,15 +142,33 @@ public class Crime {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Crime crime = (Crime) o;
-        return Objects.equals(category, crime.category) &&
-                Objects.equals(persistentId, crime.persistentId) &&
-                Objects.equals(month, crime.month) &&
+//        System.out.println("------------------------------------------------------------");
+//        System.out.println(id == crime.id);
+//        System.out.println(category.equals(crime.category));
+//        System.out.println(persistentId.equals(crime.persistentId));
+//        System.out.println(context.equals(crime.context));
+//        System.out.println(locationType);
+//        System.out.println(crime.locationType);
+//        System.out.println(locationType.equals(crime.locationType));
+//        System.out.println(locationSubtype.equals(crime.locationSubtype));
+//        System.out.println(month.equals(crime.month));
+//        System.out.println(Objects.equals(location, crime.location));
+//        System.out.println(Objects.equals(outcomeStatus, crime.outcomeStatus));
+//
+
+        return id == crime.id &&
+                category.equals(crime.category) &&
+                persistentId.equals(crime.persistentId) &&
+                context.equals(crime.context) &&
+                locationType.equals(crime.locationType) &&
+                locationSubtype.equals(crime.locationSubtype) &&
+                month.equals(crime.month) &&
+                location.equals(crime.location) &&
+                Objects.equals(outcomeStatus, crime.outcomeStatus) &&
                 Objects.equals(location, crime.location) &&
-                Objects.equals(context, crime.context) &&
-                Objects.equals(id, crime.id) &&
-                Objects.equals(locationType, crime.locationType) &&
-                Objects.equals(locationSubtype, crime.locationSubtype);
+                Objects.equals(outcomeStatus, crime.outcomeStatus);
     }
+
 
     @Override
     public int hashCode() {

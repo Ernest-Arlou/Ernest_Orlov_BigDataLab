@@ -27,7 +27,7 @@ public class main {
 
 
     public static void main(String[] args1) throws Exception {
-        String[] args = {"-Dhelp=help", "-Dstart=2019-05", "-Dend=2019-06", "-Dpath=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv"};
+        String[] args = {"-Dtest=test", "-Dstart=2019-05", "-Dend=2019-06", "-Dpath=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv"};
 //        String[] args = {"-Dstart=2019-05", "-Dend=2019-06", "-Dpath=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv"};
 
 
