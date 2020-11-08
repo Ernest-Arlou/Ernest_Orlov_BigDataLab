@@ -1,16 +1,16 @@
 package by.epam.bigdatalab;
 
 
-import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.dao.connectionpool.factory.ConnectionPoolFactory;
 import by.epam.bigdatalab.service.factory.ServiceFactory;
+import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.*;
 
+
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Properties;
 
-public class main {
+public class Main {
     private static final String PROPERTY_START_DATE = "start";
     private static final String PROPERTY_END_DATE = "end";
     private static final String PROPERTY_PATH = "path";
@@ -28,8 +28,8 @@ public class main {
             "-Dpath='value'  Set 'value' as path to file with list of existing coordinates\n";
 
 
-    public static void main(String[] args1) throws Exception {
-        String[] args = {"-Dtest=test", "-Dstart=2019-05", "-Dend=2019-06", "-Dpath=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv"};
+    public static void main(String[] args) throws Exception {
+        String[] args1 = {"-Dtest=test", "-Dstart=2019-05", "-Dend=2019-06", "-Dpath=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv"};
 //        String[] args = {"-Dstart=2019-05", "-Dend=2019-06", "-Dpath=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv"};
 
 
@@ -44,7 +44,7 @@ public class main {
         options.addOption(propertyOption);
 
         CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = parser.parse(options, args);
+        CommandLine cmd = parser.parse(options, args1);
 
         if (cmd.hasOption("D")) {
             Properties properties = cmd.getOptionProperties("D");

@@ -14,7 +14,7 @@ echo "options:"
 echo "-d|--drop   drop database"
 echo "-c|--create    create databse and tables"
 echo "-t|--truncate    delete database info"
-echo "-p|--postgresql    postgresql instaltion"
+echo "-b|--build    build the project with maven"
 echo "-v|--verbose   Verbouse mode"
 
 }
@@ -27,12 +27,21 @@ output(){
          fi
 }
 ################################################################################
-installationResult() {
+operation_result() {
 if (( $? >0 )); then
             echo "$1 failed"
 		 else
 		    echo "$1 complete"
          fi
+}
+################################################################################
+build_project(){
+cd /home/shared/Task3
+
+mvn clean compile assembly:single
+
+java -cp target/PoliceData-1.0-SNAPSHOT-jar-with-dependencies.jar by.epam.bigdatalab.Main
+
 }
 ################################################################################
 delete_db_data(){
@@ -182,6 +191,7 @@ VERBOSE=0
 CREATE=0
 DROP=0
 TRUNCATE=0
+BUILD=0
 HELP=0
 
 for i in "$@"; do 
@@ -211,6 +221,11 @@ case $i in
     TRUNCATE=1
     ;;
 esac
+case $i in
+    -b|--build)
+    BUILD=1
+    ;;
+esac
 done
 
 if(( HELP > 0 )); then
@@ -221,20 +236,27 @@ if(( HELP > 0 )); then
    if (( DROP > 0 )); then
       echo "deleting database"
       output drop_db
-      installationResult "deleting database"		        
+      operation_result "deleting database"		        
    fi
 
    if (( CREATE > 0 )); then
       echo "creating database"
       output create_db 
-	  installationResult "creating database"	
+	  operation_result "creating database"	
       
    fi
    
    if (( TRUNCATE > 0 )); then
       echo "deleting database data"
       output delete_db_data 
-	  installationResult "deleting database data"	
+	  operation_result "deleting database data"	
+      
+   fi
+   
+   if (( BUILD > 0 )); then
+      echo "building project"
+      output build_project 
+	  operation_result "building project"	
       
    fi
 	
