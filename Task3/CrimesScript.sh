@@ -15,6 +15,7 @@ echo "-d|--drop   drop database"
 echo "-c|--create    create databse and tables"
 echo "-t|--truncate    delete database info"
 echo "-b|--build    build the project with maven"
+echo "-r|--run    run the project"
 echo "-v|--verbose   Verbouse mode"
 
 }
@@ -36,16 +37,24 @@ if (( $? >0 )); then
 }
 ################################################################################
 build_project(){
-cd /home/shared/Task3
+cd /home/shared/Task3 || return 1
 
 mvn clean compile assembly:single
 
+}
+################################################################################
+run_project(){
+cd /home/shared/Task3 || return 1
 java -cp target/PoliceData-1.0-SNAPSHOT-jar-with-dependencies.jar by.epam.bigdatalab.Main
-
 }
 ################################################################################
 delete_db_data(){
-prepare_postgresql
+if ! prepare_postgresql;
+then
+  echo "failed"
+  return 1
+fi
+
 sudo -u postgres psql -d crimes -c "
 TRUNCATE TABLE \"Outcome-status\" CASCADE;
 TRUNCATE TABLE \"Street\" CASCADE;
@@ -57,11 +66,17 @@ TRUNCATE TABLE \"Crimes\" CASCADE;
 ################################################################################
 prepare_postgresql(){
 service postgresql-9.6 start >&- 2>&-
-cd /home >&- 2>&-
+cd /home >&- 2>&- || return 1
 }
 ################################################################################
 drop_db(){
-prepare_postgresql
+
+if ! prepare_postgresql;
+then
+  echo "failed"
+  return 1
+fi
+
 if [ "$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='crimes'" )" = '1' ]
 then
    drop_db_command  
@@ -69,7 +84,13 @@ fi
 }
 ################################################################################
 create_db(){
-prepare_postgresql
+
+if ! prepare_postgresql;
+then
+  echo "failed"
+  return 1
+fi
+
 
 if [ "$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='crimes'" )" != '1' ]
 then
@@ -192,6 +213,7 @@ CREATE=0
 DROP=0
 TRUNCATE=0
 BUILD=0
+RUN=0
 HELP=0
 
 for i in "$@"; do 
@@ -226,6 +248,11 @@ case $i in
     BUILD=1
     ;;
 esac
+case $i in
+    -r|--run)
+    RUN=1
+    ;;
+esac
 done
 
 if(( HELP > 0 )); then
@@ -258,6 +285,10 @@ if(( HELP > 0 )); then
       output build_project 
 	  operation_result "building project"	
       
+   fi
+   
+   if (( RUN > 0 )); then
+      output run_project    
    fi
 	
 fi

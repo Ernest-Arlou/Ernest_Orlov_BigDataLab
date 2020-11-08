@@ -15,27 +15,23 @@ public final class HikariConnectionPoolImpl implements ConnectionPool {
     @Override
     public void init() {
 
-//        Properties props = new Properties();
-//
-//        DBResourceManager dbResourceManager = DBResourceManager.getInstance();
-//        props.setProperty(DBParameter.DATA_SOURCE_CLASS_NAME, dbResourceManager.getValue(DBParameter.DB_DATA_SOURCE_CLASS_NAME));
-//        props.setProperty(DBParameter.DATA_SOURCE_USER, dbResourceManager.getValue(DBParameter.DB_USER));
-//        props.setProperty(DBParameter.DATA_SOURCE_PASSWORD, dbResourceManager.getValue(DBParameter.DB_PASSWORD));
-//        props.setProperty(DBParameter.DATA_SOURCE_DATABASE_NAME, dbResourceManager.getValue(DBParameter.DB_NAME));
-//        props.setProperty("dataSource.portNumber", "5432");
-//        props.setProperty("dataSource.serverName", "localhost");
-//
-//
-//        HikariConfig config = new HikariConfig(props);
-//        hikariDataSource = new HikariDataSource(config);
+        Properties props = new Properties();
 
-//
-        hikariDataSource = new HikariDataSource();
-        hikariDataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/crimes");
-        hikariDataSource.setUsername("postgres");
-        hikariDataSource.setPassword("1234");
+        DBResourceManager dbResourceManager = DBResourceManager.getInstance();
+        props.setProperty(DBParameter.DATA_SOURCE_CLASS_NAME, dbResourceManager.getValue(DBParameter.DB_DATA_SOURCE_CLASS_NAME));
+        props.setProperty(DBParameter.DATA_SOURCE_USER, dbResourceManager.getValue(DBParameter.DB_USER));
+        props.setProperty(DBParameter.DATA_SOURCE_PASSWORD, dbResourceManager.getValue(DBParameter.DB_PASSWORD));
+        props.setProperty(DBParameter.DATA_SOURCE_DATABASE_NAME, dbResourceManager.getValue(DBParameter.DB_NAME));
+
+        HikariConfig config = new HikariConfig(props);
+        hikariDataSource = new HikariDataSource(config);
 
 
+
+//        hikariDataSource = new HikariDataSource();
+//        hikariDataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/crimes");
+//        hikariDataSource.setUsername("postgres");
+//        hikariDataSource.setPassword("1234");
 
     }
 
