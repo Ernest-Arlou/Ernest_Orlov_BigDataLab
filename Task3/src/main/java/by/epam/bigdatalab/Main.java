@@ -32,10 +32,7 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
-//        String[] args1 = {"-Dstart=2019-05", "-Dend=2019-05",
-//                "-Dpath=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv",
-//                "-Dsave=db",
-//                "-Doutput=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/Crimes.txt"};
+
 
 
         Options options = new Options();
