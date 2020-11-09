@@ -19,7 +19,9 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class PoliceAPIServiceImp implements PoliceAPIService {
 
@@ -27,6 +29,10 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
     private static final String DATE_PATTERN = "yyyy-MM";
     private static final String POLICE_API = "https://data.police.uk/api";
     private static final String CRIMES_URI = "/crimes-street/all-crime";
+    private static final int CORE_POOL_SIZE = 30;
+    private static final int CONNECTIONS_LIMIT = 15;
+    private static final int CONNECTIONS_LIMIT_PER_TIME_SECONDS = 1;
+    private static final int FORCED_THREAD_TERMINATION_SECONDS = 120;
     private static final int CONNECTION_TIMEOUT = 6000;
     private static final int CONNECTION_READ_TIMEOUT = 6000;
     private static final String PARAMETER_LATITUDE = "lat";
@@ -35,20 +41,34 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
     private static final Logger logger = LoggerFactory.getLogger(PoliceAPIServiceImp.class);
 
+    public static void awaitTerminationAfterShutdown(ExecutorService threadPool) throws ServiceException {
+        threadPool.shutdown();
+        try {
+            if (!threadPool.awaitTermination(FORCED_THREAD_TERMINATION_SECONDS, TimeUnit.SECONDS)) {
+                threadPool.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            threadPool.shutdownNow();
+            Thread.currentThread().interrupt();
+            logger.error("InterruptedException in PoliceAPIServiceImp method awaitTerminationAfterShutdown()");
+            throw new ServiceException("DAOException in getPointsFromFile");
+        }
+    }
 
     @Override
     public void test() throws ServiceException, FileException {
 
 
-        testOnePoint();
+//        testOnePoint();
 //
-//        LocalDate start = LocalDate.of(2018, 1, 1);
-//        LocalDate end = LocalDate.of(2018, 1, 1);
-//
-//        String path = "E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv";
-//
-//
+        LocalDate start = LocalDate.of(2018, 1, 1);
+        LocalDate end = LocalDate.of(2018, 1, 1);
+
+        String path = "E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv";
+
+
 //        processCrimes(start, end, path);
+        processCrimesToDB(start,end,path);
 
 
     }
@@ -69,48 +89,74 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
         List<Crime> crimes = doRequest(buildURL(CRIMES_URI, stringObjectMap1), Crime.class);
 
-        saveCrimesInDB(crimes);
+        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(new HashSet<>(crimes));
+
+
+        String path = "E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/Crimes.txt";
+
+        Set<Crime> crimeSet = new HashSet<>(crimes);
+        saveCrimesInFile(crimeSet, path);
 
     }
-
 
     @Override
-    public void processCrimes(LocalDate startDate, LocalDate endDate, String path) throws ServiceException {
-        List<Point> points = null;
-        try {
-            points = DAOFactory.getInstance().getFileDAO().getPoints(path);
-            if (points == null) {
-                logger.error("No points in file in PoliceAPIServiceImp method processCrimes()");
-                throw new ServiceException("No points in file");
-            }
-
-            List<LocalDate> localDates = buildDateRange(startDate, endDate);
-            List<URL> urls = buildURLs(localDates, points);
-
-            System.out.println(urls.size());
-
-            int i = 0;
-            for (URL url : urls) {
-                List<Crime> crimes = doRequest(url, Crime.class);
-                System.out.println(i);
-                i++;
-                saveCrimesInDB(crimes);
-                if (i == 40)
-                    return;
-
-            }
-
-
-        } catch (DAOException e) {
-            logger.error("DAOException in PoliceAPIServiceImp method processCrimes()");
-            throw new ServiceException("DAOException in getPointsFromFile", e);
-        }
-
+    public void processCrimesToDB(LocalDate startDate, LocalDate endDate, String path) throws ServiceException {
+        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(processCrimes(startDate, endDate, path));
     }
 
-    private void saveCrimesInDB(List<Crime> crimes) {
-        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(crimes);
+    @Override
+    public void processCrimesToFile(LocalDate startDate, LocalDate endDate, String pathToPoints, String pathToSaveFile) throws ServiceException {
+        saveCrimesInFile(processCrimes(startDate, endDate, pathToPoints), pathToSaveFile);
+    }
 
+
+    private Set<Crime> processCrimes(LocalDate startDate, LocalDate endDate, String path) throws ServiceException {
+        List<Point> points = null;
+        Set<Crime> crimesSet = null;
+
+        points = getPointsFromFile(path);
+        if (points == null) {
+            logger.error("No points in file in PoliceAPIServiceImp method processCrimes()");
+            throw new ServiceException("No points in file");
+        }
+
+        List<LocalDate> localDates = buildDateRange(startDate, endDate);
+        List<URL> urls = buildURLs(localDates, points);
+
+        System.out.println(urls.size());
+        crimesSet = new CopyOnWriteArraySet<>();
+        ScheduledExecutorService ses = new ScheduledThreadPoolExecutor(CORE_POOL_SIZE);
+
+        LocalDateTime start = LocalDateTime.now();
+
+        int startingDelaySeconds = 0;
+        for (int i = 0; i < urls.size(); i++) {
+            if (i % CONNECTIONS_LIMIT == 0) {
+                startingDelaySeconds += CONNECTIONS_LIMIT_PER_TIME_SECONDS;
+            }
+            ses.schedule(new CrimeRequest(urls.get(i), crimesSet), startingDelaySeconds, TimeUnit.SECONDS);
+        }
+
+
+        awaitTerminationAfterShutdown(ses);
+        LocalDateTime end = LocalDateTime.now();
+
+        System.out.println("Crimes set size: " + crimesSet.size());
+        System.out.println(start);
+        System.out.println(end);
+
+
+        return crimesSet;
+    }
+
+    private void saveCrimesInFile(Set<Crime> crimes, String path) throws ServiceException {
+        String jsonOutput = JSON.toJSONString(crimes);
+        try {
+            DAOFactory.getInstance().getFileDAO().saveCrimes(jsonOutput, path);
+        } catch (DAOException e) {
+            logger.error("DAOException in PoliceAPIServiceImp method saveCrimesInFile()");
+            throw new ServiceException("Can't save crimes in file", e);
+        }
     }
 
     private List<LocalDate> buildDateRange(LocalDate startDate, LocalDate endDate) {
@@ -138,8 +184,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         return urls;
     }
 
-
-    private List<Point> getPointsFromFile(String path) throws ServiceException, FileException {
+    private List<Point> getPointsFromFile(String path) throws ServiceException {
         try {
             return DAOFactory.getInstance().getFileDAO().getPoints(path);
         } catch (DAOException e) {
@@ -147,7 +192,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
             throw new ServiceException("DAOException in getPointsFromFile", e);
         }
     }
-
 
     private String buildParameters(Map<String, Object> parameters) {
 
@@ -181,7 +225,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         }
         return url;
     }
-
 
     private <T> List<T> doRequest(URL url, Class<T> type) throws ServiceException {
         HttpURLConnection connection = null;
@@ -218,7 +261,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         return objects;
     }
 
-
     private boolean gotConnection(HttpURLConnection connection) throws ServiceException {
         int responseCode = 0;
         try {
@@ -247,6 +289,28 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         logger.error("Error in PoliceAPIServiceImp method gotConnection() - " + errorStr);
         throw new ServiceException(errorStr);
 
+    }
+
+    private class CrimeRequest implements Callable {
+
+        private Set<Crime> set;
+        private URL url;
+
+
+        public CrimeRequest(URL url, Set<Crime> set) {
+            this.url = url;
+            this.set = set;
+
+        }
+
+        @Override
+        public Object call() throws ServiceException {
+            List<Crime> crimeList = doRequest(url, Crime.class);
+            if (crimeList != null) {
+                set.addAll(crimeList);
+            }
+            return null;
+        }
     }
 
 

@@ -11,8 +11,7 @@ import org.codejargon.fluentjdbc.api.FluentJdbcBuilder;
 import org.codejargon.fluentjdbc.api.query.Query;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PostgreSQLDAOImpl implements DataBaseDAO {
 
@@ -48,6 +47,14 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
     private static final String GET_LOCATIONS = "SELECT * FROM \"Location\"";
     private static final String GET_CRIMES = "SELECT * FROM \"Crimes\"";
 
+    private static final String GET_STREET_BY_ID = "Select * from \"Street\" where id = ?;";
+    private static final String GET_LOCATION_BY_ID = "Select * from \"Location\" where id = ?;";
+    private static final String GET_OUTCOME_STATUS_BY_ID = "Select * from \"Outcome-status\" where id = ?;";
+    private static final String GET_LOCATION_BY_LAT_AND_LONG = "Select * from \"Location\" where latitude = ? and longitude = ?;";
+    private static final String GET_OUTCOME_BY_CATEGORY_AND_DATE = "Select * from \"Outcome-status\" where category = ? and date = ?;";
+
+
+
 
     DataSource dataSource = ConnectionPoolFactory.getInstance().getConnectionPool().getSource();
     FluentJdbc fluentJdbc = new FluentJdbcBuilder()
@@ -56,7 +63,7 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
     Query query = fluentJdbc.query();
 
     @Override
-    public void saveCrimesToDB(List<Crime> crimes) {
+    public void saveCrimesToDB(Set<Crime> crimes) {
 
         System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         saveCrimeLocationStreets(crimes);
@@ -66,8 +73,8 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
 
     }
 
-    private void saveCrimeLocationStreets(List<Crime> crimes) {
-        List<CrimeLocationStreet> existingCrimeLocationStreets = new ArrayList<>(getAllCrimeLocationStreets());
+    private void saveCrimeLocationStreets(Set<Crime> crimes) {
+        Set<CrimeLocationStreet> existingCrimeLocationStreets = new HashSet<>(getAllCrimeLocationStreets());
 
         for (Crime crime : crimes) {
             CrimeLocationStreet street = crime.getLocation().getStreet();
@@ -78,9 +85,8 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
         }
     }
 
-    private void saveCrimeLocations(List<Crime> crimes) {
-        List<CrimeLocation> existingCrimeLocations = new ArrayList<>(getAllCrimeLocations());
-
+    private void saveCrimeLocations(Set<Crime> crimes) {
+        Set<CrimeLocation> existingCrimeLocations = new HashSet<>(getAllCrimeLocations());
         for (Crime crime : crimes) {
             CrimeLocation crimeLocation = crime.getLocation();
             if (!existingCrimeLocations.contains(crimeLocation)) {
@@ -90,9 +96,8 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
         }
     }
 
-    private void saveCrimeOutcomeStatuses(List<Crime> crimes) {
-        List<CrimeOutcomeStatus> existingCrimeOutcomeStatuses = new ArrayList<>(getAllCrimeOutcomeStatuses());
-
+    private void saveCrimeOutcomeStatuses(Set<Crime> crimes) {
+        Set<CrimeOutcomeStatus> existingCrimeOutcomeStatuses = new HashSet<>(getAllCrimeOutcomeStatuses());
         for (Crime crime : crimes) {
             CrimeOutcomeStatus crimeOutcomeStatus = crime.getOutcomeStatus();
             if (crimeOutcomeStatus == null) {
@@ -105,42 +110,14 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
         }
     }
 
-    private void saveCrimes(List<Crime> crimes) {
-        List<Crime> existingCrimes = new ArrayList<>(getAllCrimes());
+    private void saveCrimes(Set<Crime> crimes) {
+        Set<Crime> existingCrimes = new HashSet<>(getAllCrimes());
 
         for (Crime crime : crimes) {
             if (!existingCrimes.contains(crime)) {
                 addCrime(crime);
                 existingCrimes.add(crime);
             }
-        }
-    }
-
-    private void addCrime(Crime crime) {
-        if (crime.getOutcomeStatus() == null) {
-            query.update(ADD_CRIME_WITHOUT_OUTCOME)
-                    .params(crime.getCategory(),
-                            crime.getContext(),
-                            crime.getId(),
-                            crime.getLocationSubtype(),
-                            crime.getLocationType(),
-                            crime.getMonth(),
-                            crime.getPersistentId(),
-                            getCrimeLocationId(crime.getLocation()))
-
-                    .run();
-        } else {
-            query.update(ADD_CRIME_WITH_OUTCOME)
-                    .params(crime.getCategory(),
-                            crime.getContext(),
-                            crime.getId(),
-                            crime.getLocationSubtype(),
-                            crime.getLocationType(),
-                            crime.getMonth(),
-                            crime.getPersistentId(),
-                            getCrimeLocationId(crime.getLocation()),
-                            getCrimeOutcomeStatusId(crime.getOutcomeStatus()))
-                    .run();
         }
     }
 
@@ -182,21 +159,16 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
     }
 
     private List<CrimeLocation> getAllCrimeLocations() {
-        List<CrimeLocationStreet> crimeLocationStreets = new ArrayList<>(getAllCrimeLocationStreets());
-
         return query.select(GET_LOCATIONS)
                 .listResult(resultSet ->
                         new CrimeLocation(resultSet.getLong(LOCATION_ID),
                                 resultSet.getDouble(LOCATION_LATITUDE),
                                 resultSet.getDouble(LOCATION_LONGITUDE),
-                                getCrimeLocationStreet(crimeLocationStreets, resultSet.getLong(LOCATION_STREET_ID))));
+                                getCrimeLocationStreetById(resultSet.getLong(LOCATION_STREET_ID))));
     }
 
 
     private List<Crime> getAllCrimes() {
-        List<CrimeLocation> crimeLocations = new ArrayList<>(getAllCrimeLocations());
-        List<CrimeOutcomeStatus> crimeOutcomeStatuses = new ArrayList<>(getAllCrimeOutcomeStatuses());
-
         return query.select(GET_CRIMES)
                 .listResult(resultSet ->
                         new Crime(resultSet.getLong(CRIMES_ID),
@@ -206,61 +178,89 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
                                 resultSet.getString(CRIMES_CONTEXT),
                                 resultSet.getString(CRIMES_LOCATION_TYPE),
                                 resultSet.getString(CRIMES_LOCATION_SUBTYPE),
-                                getCrimeLocation(crimeLocations, resultSet.getLong(CRIMES_LOCATION_ID)),
-                                getCrimeOutcomeStatus(crimeOutcomeStatuses, resultSet.getLong(CRIMES_OUTCOME_STATUS_ID)
+                                getCrimeLocationById(resultSet.getLong(CRIMES_LOCATION_ID)),
+                                getCrimeOutcomeStatusById(resultSet.getLong(CRIMES_OUTCOME_STATUS_ID)
                                 )));
 
     }
 
-    private CrimeLocationStreet getCrimeLocationStreet(List<CrimeLocationStreet> crimeLocationStreets, long streetId) {
-        for (CrimeLocationStreet street : crimeLocationStreets) {
-            if (street.getId() == streetId) {
-                return street;
-            }
+    private void addCrime(Crime crime) {
+        if (crime.getOutcomeStatus() == null) {
+            query.update(ADD_CRIME_WITHOUT_OUTCOME)
+                    .params(crime.getCategory(),
+                            crime.getContext(),
+                            crime.getId(),
+                            crime.getLocationSubtype(),
+                            crime.getLocationType(),
+                            crime.getMonth(),
+                            crime.getPersistentId(),
+                            getCrimeLocationId(crime.getLocation()))
+
+                    .run();
+        } else {
+            query.update(ADD_CRIME_WITH_OUTCOME)
+                    .params(crime.getCategory(),
+                            crime.getContext(),
+                            crime.getId(),
+                            crime.getLocationSubtype(),
+                            crime.getLocationType(),
+                            crime.getMonth(),
+                            crime.getPersistentId(),
+                            getCrimeLocationId(crime.getLocation()),
+                            getCrimeOutcomeStatusId(crime.getOutcomeStatus()))
+                    .run();
         }
-        return null;
     }
 
-    private CrimeLocation getCrimeLocation(List<CrimeLocation> crimeLocations, long crimeLocationId) {
-
-        for (CrimeLocation crimeLocation : crimeLocations) {
-            if (crimeLocation.getId() == crimeLocationId) {
-                return crimeLocation;
-            }
-        }
-        return null;
+    private CrimeLocationStreet getCrimeLocationStreetById(long streetId) {
+        return query.select(GET_STREET_BY_ID)
+                .params(streetId).singleResult((resultSet ->
+                        new CrimeLocationStreet(resultSet.getLong(STREET_ID),
+                                resultSet.getString(STREET_NAME)
+                                )));
     }
 
-    private CrimeOutcomeStatus getCrimeOutcomeStatus(List<CrimeOutcomeStatus> crimeOutcomeStatuses, long crimeOutcomeId) {
-
-        for (CrimeOutcomeStatus crimeOutcomeStatus : crimeOutcomeStatuses) {
-            if (crimeOutcomeStatus.getId() == crimeOutcomeId) {
-                return crimeOutcomeStatus;
-            }
-        }
-        return null;
+    private CrimeLocation getCrimeLocationById(long crimeLocationId) {
+        return query.select(GET_LOCATION_BY_ID)
+                .params(crimeLocationId).singleResult((resultSet ->
+                        new CrimeLocation(crimeLocationId,
+                                resultSet.getDouble(LOCATION_LATITUDE),
+                                resultSet.getDouble(LOCATION_LONGITUDE),
+                                getCrimeLocationStreetById(resultSet.getLong(LOCATION_STREET_ID)))));
     }
+
+
+    private CrimeOutcomeStatus getCrimeOutcomeStatusById(long crimeOutcomeId) {
+        if (crimeOutcomeId == 0) {
+            return null;
+        }
+        return query.select(GET_OUTCOME_STATUS_BY_ID)
+                .params(crimeOutcomeId).singleResult(
+                        (resultSet ->
+                        new CrimeOutcomeStatus(crimeOutcomeId,
+                                resultSet.getString(OUTCOME_STATUS_CATEGORY),
+                                resultSet.getDate(OUTCOME_STATUS_DATE))));
+    }
+
 
     private long getCrimeLocationId(CrimeLocation crimeLocation) {
-        List<CrimeLocation> crimeLocations = new ArrayList<>(getAllCrimeLocations());
-        for (CrimeLocation crimeLoc : crimeLocations) {
-            if (crimeLoc.equals(crimeLocation)) {
-                return crimeLoc.getId();
-            }
-        }
-        return -1;
+        return query.select(GET_LOCATION_BY_LAT_AND_LONG)
+                .params(crimeLocation.getLatitude(),
+                        crimeLocation.getLongitude()).singleResult((resultSet ->
+                       (resultSet.getLong(LOCATION_ID))));
+
     }
+
 
     private long getCrimeOutcomeStatusId(CrimeOutcomeStatus crimeOutcomeStatus) {
+        return query.select(GET_OUTCOME_BY_CATEGORY_AND_DATE)
+                .params(crimeOutcomeStatus.getCategory(),
+                        crimeOutcomeStatus.getDate()
+                ).singleResult((resultSet ->
+                        (resultSet.getLong(OUTCOME_STATUS_ID))));
 
-        List<CrimeOutcomeStatus> crimeOut = new ArrayList<>(getAllCrimeOutcomeStatuses());
-        for (CrimeOutcomeStatus status : crimeOut) {
-            if (status.equals(crimeOutcomeStatus)) {
-                return status.getId();
-            }
-        }
-        return -1;
     }
+
 
 
 }

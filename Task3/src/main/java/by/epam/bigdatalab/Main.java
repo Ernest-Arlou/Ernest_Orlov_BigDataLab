@@ -68,7 +68,7 @@ public class Main {
 
             ConnectionPoolFactory.getInstance().getConnectionPool().init();
 
-            ServiceFactory.getInstance().getPoliceAPIService().processCrimes(start, end, path);
+            ServiceFactory.getInstance().getPoliceAPIService().processCrimesToDB(start, end, path);
 
             ConnectionPoolFactory.getInstance().getConnectionPool().dispose();
         }
