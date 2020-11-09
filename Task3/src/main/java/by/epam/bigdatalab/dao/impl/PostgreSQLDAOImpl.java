@@ -11,7 +11,9 @@ import org.codejargon.fluentjdbc.api.FluentJdbcBuilder;
 import org.codejargon.fluentjdbc.api.query.Query;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class PostgreSQLDAOImpl implements DataBaseDAO {
 
@@ -52,8 +54,6 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
     private static final String GET_OUTCOME_STATUS_BY_ID = "Select * from \"Outcome-status\" where id = ?;";
     private static final String GET_LOCATION_BY_LAT_AND_LONG = "Select * from \"Location\" where latitude = ? and longitude = ?;";
     private static final String GET_OUTCOME_BY_CATEGORY_AND_DATE = "Select * from \"Outcome-status\" where category = ? and date = ?;";
-
-
 
 
     DataSource dataSource = ConnectionPoolFactory.getInstance().getConnectionPool().getSource();
@@ -215,7 +215,7 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
                 .params(streetId).singleResult((resultSet ->
                         new CrimeLocationStreet(resultSet.getLong(STREET_ID),
                                 resultSet.getString(STREET_NAME)
-                                )));
+                        )));
     }
 
     private CrimeLocation getCrimeLocationById(long crimeLocationId) {
@@ -235,9 +235,9 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
         return query.select(GET_OUTCOME_STATUS_BY_ID)
                 .params(crimeOutcomeId).singleResult(
                         (resultSet ->
-                        new CrimeOutcomeStatus(crimeOutcomeId,
-                                resultSet.getString(OUTCOME_STATUS_CATEGORY),
-                                resultSet.getDate(OUTCOME_STATUS_DATE))));
+                                new CrimeOutcomeStatus(crimeOutcomeId,
+                                        resultSet.getString(OUTCOME_STATUS_CATEGORY),
+                                        resultSet.getDate(OUTCOME_STATUS_DATE))));
     }
 
 
@@ -245,7 +245,7 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
         return query.select(GET_LOCATION_BY_LAT_AND_LONG)
                 .params(crimeLocation.getLatitude(),
                         crimeLocation.getLongitude()).singleResult((resultSet ->
-                       (resultSet.getLong(LOCATION_ID))));
+                        (resultSet.getLong(LOCATION_ID))));
 
     }
 
@@ -258,7 +258,6 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
                         (resultSet.getLong(OUTCOME_STATUS_ID))));
 
     }
-
 
 
 }

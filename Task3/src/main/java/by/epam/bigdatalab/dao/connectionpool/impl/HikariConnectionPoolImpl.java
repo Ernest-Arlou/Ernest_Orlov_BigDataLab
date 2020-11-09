@@ -27,7 +27,6 @@ public final class HikariConnectionPoolImpl implements ConnectionPool {
         hikariDataSource = new HikariDataSource(config);
 
 
-
 //        hikariDataSource = new HikariDataSource();
 //        hikariDataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/crimes");
 //        hikariDataSource.setUsername("postgres");
@@ -44,7 +43,6 @@ public final class HikariConnectionPoolImpl implements ConnectionPool {
     public void dispose() {
         hikariDataSource.close();
     }
-
 
 
 }

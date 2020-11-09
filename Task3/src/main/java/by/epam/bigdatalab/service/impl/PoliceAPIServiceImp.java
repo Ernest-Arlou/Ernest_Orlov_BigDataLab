@@ -1,6 +1,5 @@
 package by.epam.bigdatalab.service.impl;
 
-import by.epam.bigdatalab.FileException;
 import by.epam.bigdatalab.Util;
 import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.bean.Point;
@@ -19,14 +18,11 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 
 public class PoliceAPIServiceImp implements PoliceAPIService {
 
-    private static final String REQUEST_METHOD_GET = "GET";
-    private static final String DATE_PATTERN = "yyyy-MM";
     private static final String POLICE_API = "https://data.police.uk/api";
     private static final String CRIMES_URI = "/crimes-street/all-crime";
     private static final int CORE_POOL_SIZE = 30;
@@ -82,8 +78,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         crimesSet = new CopyOnWriteArraySet<>();
         ScheduledExecutorService ses = new ScheduledThreadPoolExecutor(CORE_POOL_SIZE);
 
-        LocalDateTime start = LocalDateTime.now();
-
         int startingDelaySeconds = 0;
         for (int i = 0; i < urls.size(); i++) {
             if (i % CONNECTIONS_LIMIT == 0) {
@@ -92,11 +86,7 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
             ses.schedule(new CrimeRequest(urls.get(i), crimesSet), startingDelaySeconds, TimeUnit.SECONDS);
         }
 
-
         awaitTerminationAfterShutdown(ses);
-        LocalDateTime end = LocalDateTime.now();
-
-
 
         return crimesSet;
     }
@@ -245,8 +235,8 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
 
     private class CrimeRequest implements Callable {
 
-        private Set<Crime> set;
-        private URL url;
+        private final Set<Crime> set;
+        private final URL url;
 
 
         public CrimeRequest(URL url, Set<Crime> set) {
