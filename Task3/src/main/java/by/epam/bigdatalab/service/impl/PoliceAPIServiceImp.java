@@ -79,7 +79,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         List<LocalDate> localDates = buildDateRange(startDate, endDate);
         List<URL> urls = buildURLs(localDates, points);
 
-        System.out.println(urls.size());
         crimesSet = new CopyOnWriteArraySet<>();
         ScheduledExecutorService ses = new ScheduledThreadPoolExecutor(CORE_POOL_SIZE);
 
@@ -97,9 +96,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
         awaitTerminationAfterShutdown(ses);
         LocalDateTime end = LocalDateTime.now();
 
-        System.out.println("Crimes set size: " + crimesSet.size());
-        System.out.println(start);
-        System.out.println(end);
 
 
         return crimesSet;

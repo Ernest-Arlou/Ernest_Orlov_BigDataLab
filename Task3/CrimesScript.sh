@@ -44,8 +44,9 @@ mvn clean compile assembly:single
 }
 ################################################################################
 run_project(){
+prepare_postgresql
 cd /home/shared/Task3 || return 1
-java -cp target/PoliceData-1.0-SNAPSHOT-jar-with-dependencies.jar by.epam.bigdatalab.Main
+java -cp target/PoliceData-1.0-SNAPSHOT-jar-with-dependencies.jar by.epam.bigdatalab.Main -Dstart=2019-05 -Dend=2019-05 -Dsave=file -Dpath=/home/shared/LondonStations.csv -Doutput=/home/shared/Crimes.txt
 }
 ################################################################################
 delete_db_data(){
@@ -66,7 +67,7 @@ TRUNCATE TABLE \"Crimes\" CASCADE;
 ################################################################################
 prepare_postgresql(){
 service postgresql-9.6 start >&- 2>&-
-cd /home >&- 2>&- || return 1
+cd /home/shared/Task3 >&- 2>&- || return 1
 }
 ################################################################################
 drop_db(){

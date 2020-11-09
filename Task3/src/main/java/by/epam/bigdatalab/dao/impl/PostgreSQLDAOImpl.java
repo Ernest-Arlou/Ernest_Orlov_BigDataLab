@@ -64,8 +64,6 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
 
     @Override
     public void saveCrimesToDB(Set<Crime> crimes) {
-
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         saveCrimeLocationStreets(crimes);
         saveCrimeLocations(crimes);
         saveCrimeOutcomeStatuses(crimes);
