@@ -56,50 +56,6 @@ public class PoliceAPIServiceImp implements PoliceAPIService {
     }
 
     @Override
-    public void test() throws ServiceException, FileException {
-
-
-//        testOnePoint();
-//
-        LocalDate start = LocalDate.of(2018, 1, 1);
-        LocalDate end = LocalDate.of(2018, 1, 1);
-
-        String path = "E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv";
-
-
-//        processCrimes(start, end, path);
-        processCrimesToDB(start,end,path);
-
-
-    }
-
-    private void testOnePoint() throws ServiceException {
-
-        Date date = new GregorianCalendar(2019, 4, 1).getTime();
-
-        double latitude = 52.629729;
-        double longitude = -1.131592;
-
-
-        Map<String, Object> stringObjectMap1 = new LinkedHashMap<>();
-        stringObjectMap1.put("lat", latitude);
-        stringObjectMap1.put("lng", longitude);
-        stringObjectMap1.put("date", Util.formatDate(date));
-
-
-        List<Crime> crimes = doRequest(buildURL(CRIMES_URI, stringObjectMap1), Crime.class);
-
-        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(new HashSet<>(crimes));
-
-
-        String path = "E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/Crimes.txt";
-
-        Set<Crime> crimeSet = new HashSet<>(crimes);
-        saveCrimesInFile(crimeSet, path);
-
-    }
-
-    @Override
     public void processCrimesToDB(LocalDate startDate, LocalDate endDate, String path) throws ServiceException {
         DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(processCrimes(startDate, endDate, path));
     }
