@@ -27,7 +27,7 @@ public class Crime {
     @JSONField(name = "location_type")
     private String locationType;
 
-    @JSONField(name = "location_type")
+    @JSONField(name = "location_subtype")
     private String locationSubtype;
 
     @JSONField(name = "location")
@@ -37,17 +37,7 @@ public class Crime {
     private CrimeOutcomeStatus outcomeStatus;
 
     public Crime() {
-        id = -1;
-        category = "category";
-        persistentId = "persistentId";
-        month = new Date();
-        context = "context";
 
-        locationType = "locationType";
-        locationSubtype = "locationSubtype";
-
-        location = new CrimeLocation();
-        outcomeStatus = new CrimeOutcomeStatus();
     }
 
     public Crime(long id, String category, String persistentId, Date month,
@@ -142,15 +132,20 @@ public class Crime {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Crime crime = (Crime) o;
-        return Objects.equals(category, crime.category) &&
-                Objects.equals(persistentId, crime.persistentId) &&
-                Objects.equals(month, crime.month) &&
+
+        return id == crime.id &&
+                category.equals(crime.category) &&
+                persistentId.equals(crime.persistentId) &&
+                context.equals(crime.context) &&
+                locationType.equals(crime.locationType) &&
+                locationSubtype.equals(crime.locationSubtype) &&
+                month.equals(crime.month) &&
+                location.equals(crime.location) &&
+                Objects.equals(outcomeStatus, crime.outcomeStatus) &&
                 Objects.equals(location, crime.location) &&
-                Objects.equals(context, crime.context) &&
-                Objects.equals(id, crime.id) &&
-                Objects.equals(locationType, crime.locationType) &&
-                Objects.equals(locationSubtype, crime.locationSubtype);
+                Objects.equals(outcomeStatus, crime.outcomeStatus);
     }
+
 
     @Override
     public int hashCode() {

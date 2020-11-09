@@ -6,9 +6,7 @@ import by.epam.bigdatalab.dao.FileDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,7 @@ public class FileDAOImpl implements FileDAO {
 
         List<Point> points = new ArrayList<>();
 
-        String line = "";
+        String line;
 
         logger.debug("File path = {}", path);
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -41,12 +39,29 @@ public class FileDAOImpl implements FileDAO {
                     points.add(new Point(longitude, latitude));
                 }
             }
-        } catch (IOException|NumberFormatException e) {
+        } catch (IOException | NumberFormatException e) {
             logger.error("IOException in FileDAOImpl method getPoints()", e);
             throw new DAOException("Problem with file", e);
         }
 
         return points;
+    }
+
+
+    @Override
+    public void saveCrimes(String crimes, String path) throws DAOException {
+
+        logger.debug("File path = {}", path);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+            writer.write(crimes);
+
+        } catch (IOException e) {
+            logger.error("IOException in FileDAOImpl method saveCrimes()", e);
+            throw new DAOException("Problem with file", e);
+        }
+
+
     }
 
 
