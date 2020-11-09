@@ -37,17 +37,7 @@ public class Crime {
     private CrimeOutcomeStatus outcomeStatus;
 
     public Crime() {
-        id = -1;
-        category = "category";
-        persistentId = "persistentId";
-        month = new Date();
-        context = "context";
 
-        locationType = "locationType";
-        locationSubtype = "locationSubtype";
-
-        location = new CrimeLocation();
-        outcomeStatus = new CrimeOutcomeStatus();
     }
 
     public Crime(long id, String category, String persistentId, Date month,

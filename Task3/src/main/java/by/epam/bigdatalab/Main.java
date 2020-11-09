@@ -32,10 +32,10 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
-        String[] args1 = {"-Dstart=2019-05", "-Dend=2019-05",
-                "-Dpath=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv",
-                "-Dsave=db",
-                "-Doutput=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/Crimes.txt"};
+//        String[] args1 = {"-Dstart=2019-05", "-Dend=2019-05",
+//                "-Dpath=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/LondonStations.csv",
+//                "-Dsave=db",
+//                "-Doutput=E:/University_and_Work/Java_Training/BigData/Remote/Task3/src/main/resources/Crimes.txt"};
 
 
         Options options = new Options();
@@ -67,11 +67,7 @@ public class Main {
             if (properties.getProperty(PROPERTY_SAVE).equals(PROPERTY_SAVE_IN_FILE)) {
                 String savePath = properties.getProperty(PROPERTY_OUTPUT);
 
-                System.out.println(start);
-                System.out.println(end);
-                System.out.println(path);
-                System.out.println(savePath);
-//                ServiceFactory.getInstance().getPoliceAPIService().processCrimesToFile(start, end, path, savePath);
+                ServiceFactory.getInstance().getPoliceAPIService().processCrimesToFile(start, end, path, savePath);
 
             }
 
