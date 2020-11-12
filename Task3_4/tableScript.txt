@@ -1,0 +1,93 @@
+CREATE TABLE IF NOT EXISTS public."Street"
+(
+    id bigint NOT NULL,
+    name character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Street_pkey" PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public."Street"
+    OWNER to postgres;
+	
+	
+	
+
+CREATE SEQUENCE IF NOT EXISTS "Location_id_seq";
+CREATE TABLE IF NOT EXISTS public."Location"
+(
+    id bigint NOT NULL DEFAULT nextval('"Location_id_seq"'),
+    latitude double precision NOT NULL,
+    longitude double precision NOT NULL,
+    "street-id" bigint NOT NULL,
+	CONSTRAINT "Location_pkey" PRIMARY KEY (id),
+    CONSTRAINT "street-id" FOREIGN KEY ("street-id")
+        REFERENCES public."Street" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER SEQUENCE "Location_id_seq"
+OWNED BY "Location".id;
+
+ALTER TABLE public."Location"
+    OWNER to postgres;
+	
+	
+
+CREATE SEQUENCE IF NOT EXISTS "Outcome-status_id_seq";
+
+CREATE TABLE IF NOT EXISTS public."Outcome-status"
+(
+    id bigint NOT NULL DEFAULT nextval('"Outcome-status_id_seq"'),
+    category character varying COLLATE pg_catalog."default" NOT NULL,
+    date date NOT NULL,
+    CONSTRAINT "Outcome-status_pkey" PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER SEQUENCE "Outcome-status_id_seq"
+OWNED BY "Outcome-status".id;
+
+ALTER TABLE public."Outcome-status"
+    OWNER to postgres;
+		
+
+CREATE TABLE IF NOT EXISTS public."Crimes"
+(
+    category character varying COLLATE pg_catalog."default" NOT NULL,
+    context character varying COLLATE pg_catalog."default" NOT NULL,
+    id bigint NOT NULL,
+    "location-subtype" character varying COLLATE pg_catalog."default" NOT NULL,
+    "location-type" character varying COLLATE pg_catalog."default" NOT NULL,
+    month date NOT NULL,
+    "persistent-id" character varying COLLATE pg_catalog."default" NOT NULL,
+	"location-id" bigint NOT NULL,
+	"outcome-status-id" bigint,
+    CONSTRAINT Crimes_pkey PRIMARY KEY (id),
+	CONSTRAINT "location-id" FOREIGN KEY ("location-id")
+        REFERENCES public."Location" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+	CONSTRAINT "outcome-status-id" FOREIGN KEY ("outcome-status-id")
+        REFERENCES public."Outcome-status" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public."Crimes"
+    OWNER to postgres;
+	
