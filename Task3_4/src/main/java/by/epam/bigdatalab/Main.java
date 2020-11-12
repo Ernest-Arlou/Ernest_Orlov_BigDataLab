@@ -1,8 +1,8 @@
 package by.epam.bigdatalab;
 
 
-import by.epam.bigdatalab.dao.connectionpool.factory.ConnectionPoolFactory;
-import by.epam.bigdatalab.service.factory.ServiceFactory;
+import by.epam.bigdatalab.dao.connectionpool.ConnectionPoolHolder;
+import by.epam.bigdatalab.service.PoliceApiHolder;
 import org.apache.commons.cli.*;
 
 import java.time.LocalDate;
@@ -33,8 +33,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-
-
         Options options = new Options();
 
         Option propertyOption = Option.builder()
@@ -55,7 +53,7 @@ public class Main {
                 return;
             }
 
-            ConnectionPoolFactory.getInstance().getConnectionPool().init();
+            ConnectionPoolHolder.getInstance().getConnectionPool().init();
 
             LocalDate start = LocalDate.parse(properties.getProperty(PROPERTY_START_DATE) + FIRST_DAY_ADDITION);
             LocalDate end = LocalDate.parse(properties.getProperty(PROPERTY_END_DATE) + FIRST_DAY_ADDITION);
@@ -64,16 +62,16 @@ public class Main {
             if (properties.getProperty(PROPERTY_SAVE).equals(PROPERTY_SAVE_IN_FILE)) {
                 String savePath = properties.getProperty(PROPERTY_OUTPUT);
 
-                ServiceFactory.getInstance().getPoliceAPIService().processCrimesToFile(start, end, path, savePath);
+                PoliceApiHolder.getInstance().getPoliceAPIService().processCrimesToFile(start, end, path, savePath);
 
             }
 
             if (properties.getProperty(PROPERTY_SAVE).equals(PROPERTY_SAVE_IN_DB)) {
-                ServiceFactory.getInstance().getPoliceAPIService().processCrimesToDB(start, end, path);
+                PoliceApiHolder.getInstance().getPoliceAPIService().processCrimesToDB(start, end, path);
             }
 
 
-            ConnectionPoolFactory.getInstance().getConnectionPool().dispose();
+            ConnectionPoolHolder.getInstance().getConnectionPool().dispose();
         }
 
 

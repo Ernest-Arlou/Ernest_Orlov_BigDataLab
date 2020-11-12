@@ -5,7 +5,7 @@ import by.epam.bigdatalab.bean.CrimeLocation;
 import by.epam.bigdatalab.bean.CrimeLocationStreet;
 import by.epam.bigdatalab.bean.CrimeOutcomeStatus;
 import by.epam.bigdatalab.dao.DataBaseDAO;
-import by.epam.bigdatalab.dao.connectionpool.factory.ConnectionPoolFactory;
+import by.epam.bigdatalab.dao.connectionpool.ConnectionPoolHolder;
 import org.codejargon.fluentjdbc.api.FluentJdbc;
 import org.codejargon.fluentjdbc.api.FluentJdbcBuilder;
 import org.codejargon.fluentjdbc.api.query.Query;
@@ -56,7 +56,7 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
     private static final String GET_OUTCOME_BY_CATEGORY_AND_DATE = "Select * from \"Outcome-status\" where category = ? and date = ?;";
 
 
-    DataSource dataSource = ConnectionPoolFactory.getInstance().getConnectionPool().getSource();
+    DataSource dataSource = ConnectionPoolHolder.getInstance().getConnectionPool().getSource();
     FluentJdbc fluentJdbc = new FluentJdbcBuilder()
             .connectionProvider(dataSource)
             .build();

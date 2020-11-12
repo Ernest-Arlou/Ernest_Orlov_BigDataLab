@@ -26,12 +26,6 @@ public final class HikariConnectionPoolImpl implements ConnectionPool {
         HikariConfig config = new HikariConfig(props);
         hikariDataSource = new HikariDataSource(config);
 
-
-//        hikariDataSource = new HikariDataSource();
-//        hikariDataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/crimes");
-//        hikariDataSource.setUsername("postgres");
-//        hikariDataSource.setPassword("1234");
-
     }
 
     @Override

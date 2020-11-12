@@ -1,11 +1,11 @@
 package by.epam.bigdatalab.dao.connectionpool;
 
-import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
 
 public interface ConnectionPool {
     void init();
 
-    HikariDataSource getSource();
+    DataSource getSource();
 
     void dispose();
 }
