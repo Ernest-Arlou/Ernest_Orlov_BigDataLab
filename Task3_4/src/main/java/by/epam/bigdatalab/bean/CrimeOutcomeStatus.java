@@ -1,6 +1,7 @@
 package by.epam.bigdatalab.bean;
 
 import by.epam.bigdatalab.Util;
+import by.epam.bigdatalab.service.DateUtil;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import java.util.Date;
@@ -17,9 +18,7 @@ public class CrimeOutcomeStatus {
     private Date date;
 
     public CrimeOutcomeStatus() {
-        id = -1;
-        category = "category";
-        date = new Date();
+
     }
 
     public CrimeOutcomeStatus(long id, String category, Date date) {
@@ -70,7 +69,7 @@ public class CrimeOutcomeStatus {
     public String toString() {
         return "CrimeOutcomeStatus{" +
                 "category='" + category + '\'' +
-                ", date=" + Util.formatDate(date) +
+                ", date=" + DateUtil.formatDate(date) +
                 '}';
     }
 }

@@ -6,8 +6,6 @@ public class Point {
 
 
     public Point() {
-        longitude = 0.;
-        latitude = 0.;
     }
 
     public Point(Double longitude, Double latitude) {

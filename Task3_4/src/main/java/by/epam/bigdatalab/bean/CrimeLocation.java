@@ -18,10 +18,6 @@ public class CrimeLocation {
     private CrimeLocationStreet street;
 
     public CrimeLocation() {
-        id = -1;
-        latitude = 1.;
-        longitude = 1.;
-        street = new CrimeLocationStreet();
     }
 
     public CrimeLocation(long id, Double latitude, Double longitude, CrimeLocationStreet street) {

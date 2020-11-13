@@ -1,6 +1,7 @@
 package by.epam.bigdatalab.bean;
 
 import by.epam.bigdatalab.Util;
+import by.epam.bigdatalab.service.DateUtil;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import java.util.Date;
@@ -157,7 +158,7 @@ public class Crime {
         return "Crime{" +
                 "category='" + category + '\'' +
                 ", persistentId='" + persistentId + '\'' +
-                ", month=" + Util.formatDate(month) +
+                ", month=" + DateUtil.formatDate(month) +
                 ", location=" + location +
                 ", context='" + context + '\'' +
                 ", id=" + id +

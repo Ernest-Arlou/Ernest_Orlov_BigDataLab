@@ -13,8 +13,7 @@ public class CrimeLocationStreet {
     private String name;
 
     public CrimeLocationStreet() {
-        id = -1;
-        name = "name";
+
     }
 
     public CrimeLocationStreet(long id, String name) {

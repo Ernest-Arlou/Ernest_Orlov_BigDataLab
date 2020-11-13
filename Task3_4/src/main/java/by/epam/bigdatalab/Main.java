@@ -2,7 +2,8 @@ package by.epam.bigdatalab;
 
 
 import by.epam.bigdatalab.dao.connectionpool.ConnectionPoolHolder;
-import by.epam.bigdatalab.service.PoliceApiHolder;
+import by.epam.bigdatalab.service.PoliceAPIService;
+import by.epam.bigdatalab.service.PoliceApiServiceHolder;
 import org.apache.commons.cli.*;
 
 import java.time.LocalDate;
@@ -32,6 +33,7 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
+        PoliceAPIService policeAPIService = PoliceApiServiceHolder.getInstance().getPoliceAPIService();
 
         Options options = new Options();
 
@@ -62,12 +64,12 @@ public class Main {
             if (properties.getProperty(PROPERTY_SAVE).equals(PROPERTY_SAVE_IN_FILE)) {
                 String savePath = properties.getProperty(PROPERTY_OUTPUT);
 
-                PoliceApiHolder.getInstance().getPoliceAPIService().processCrimesToFile(start, end, path, savePath);
+                policeAPIService.processCrimesToFile(start, end, path, savePath);
 
             }
 
             if (properties.getProperty(PROPERTY_SAVE).equals(PROPERTY_SAVE_IN_DB)) {
-                PoliceApiHolder.getInstance().getPoliceAPIService().processCrimesToDB(start, end, path);
+                policeAPIService.processCrimesToDB(start, end, path);
             }
 
 
