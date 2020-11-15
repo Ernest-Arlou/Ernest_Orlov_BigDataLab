@@ -20,9 +20,11 @@ public class URLManager {
     private static final Logger logger = LoggerFactory.getLogger(URLManager.class);
 
 
-    public static List<URL> buildCrimesURLs(List<LocalDate> dates, List<Point> points) {
+    public static List<URL> buildCrimesURLs(LocalDate startDate, LocalDate endDate, List<Point> points) {
+        List<LocalDate> localDateList = DateUtil.buildDateRange(startDate, endDate);
+
         List<URL> urls = new ArrayList<>();
-        for (LocalDate localDate : dates) {
+        for (LocalDate localDate : localDateList) {
             for (Point point : points) {
                 Map<String, Object> parameters = new LinkedHashMap<>();
                 parameters.put(PARAMETER_LATITUDE, point.getLatitude());
