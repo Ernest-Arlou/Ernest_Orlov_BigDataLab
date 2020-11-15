@@ -4,7 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 import java.util.Objects;
 
-public class CrimeLocation {
+public class Location {
 
     private long id;
 
@@ -15,12 +15,12 @@ public class CrimeLocation {
     private double longitude;
 
     @JSONField(name = "street")
-    private CrimeLocationStreet street;
+    private Street street;
 
-    public CrimeLocation() {
+    public Location() {
     }
 
-    public CrimeLocation(long id, Double latitude, Double longitude, CrimeLocationStreet street) {
+    public Location(long id, Double latitude, Double longitude, Street street) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -51,11 +51,11 @@ public class CrimeLocation {
         this.longitude = longitude;
     }
 
-    public CrimeLocationStreet getStreet() {
+    public Street getStreet() {
         return street;
     }
 
-    public void setStreet(CrimeLocationStreet street) {
+    public void setStreet(Street street) {
         this.street = street;
     }
 
@@ -63,7 +63,7 @@ public class CrimeLocation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CrimeLocation that = (CrimeLocation) o;
+        Location that = (Location) o;
 
         return Objects.equals(latitude, that.latitude) &&
                 Objects.equals(longitude, that.longitude) &&

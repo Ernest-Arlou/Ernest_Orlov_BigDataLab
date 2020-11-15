@@ -31,10 +31,10 @@ public class Crime {
     private String locationSubtype;
 
     @JSONField(name = "location")
-    private CrimeLocation location;
+    private Location location;
 
     @JSONField(name = "outcome_status")
-    private CrimeOutcomeStatus outcomeStatus;
+    private OutcomeStatus outcomeStatus;
 
     public Crime() {
 
@@ -42,7 +42,7 @@ public class Crime {
 
     public Crime(long id, String category, String persistentId, Date month,
                  String context, String locationType, String locationSubtype,
-                 CrimeLocation location, CrimeOutcomeStatus crimeOutcomeStatus) {
+                 Location location, OutcomeStatus outcomeStatus) {
         this.id = id;
         this.category = category;
         this.persistentId = persistentId;
@@ -51,7 +51,7 @@ public class Crime {
         this.locationType = locationType;
         this.locationSubtype = locationSubtype;
         this.location = location;
-        this.outcomeStatus = crimeOutcomeStatus;
+        this.outcomeStatus = outcomeStatus;
     }
 
 
@@ -111,19 +111,19 @@ public class Crime {
         this.locationSubtype = locationSubtype;
     }
 
-    public CrimeLocation getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(CrimeLocation location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 
-    public CrimeOutcomeStatus getOutcomeStatus() {
+    public OutcomeStatus getOutcomeStatus() {
         return outcomeStatus;
     }
 
-    public void setOutcomeStatus(CrimeOutcomeStatus outcomeStatus) {
+    public void setOutcomeStatus(OutcomeStatus outcomeStatus) {
         this.outcomeStatus = outcomeStatus;
     }
 

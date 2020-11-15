@@ -6,7 +6,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import java.util.Date;
 import java.util.Objects;
 
-public class CrimeOutcomeStatus {
+public class OutcomeStatus {
 
     private long id;
 
@@ -16,11 +16,11 @@ public class CrimeOutcomeStatus {
     @JSONField(name = "date", format = "yyyy-MM")
     private Date date;
 
-    public CrimeOutcomeStatus() {
+    public OutcomeStatus() {
 
     }
 
-    public CrimeOutcomeStatus(long id, String category, Date date) {
+    public OutcomeStatus(long id, String category, Date date) {
         this.id = id;
         this.category = category;
         this.date = date;
@@ -54,7 +54,7 @@ public class CrimeOutcomeStatus {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CrimeOutcomeStatus that = (CrimeOutcomeStatus) o;
+        OutcomeStatus that = (OutcomeStatus) o;
         return Objects.equals(category, that.category) &&
                 Objects.equals(date, that.date);
     }

@@ -1,11 +1,16 @@
 package by.epam.bigdatalab.dao;
 
+import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.bean.Point;
 
 import java.util.List;
 
 public interface FileDAO {
-    List<Point> getPoints(String path) throws DAOException;
+    List<Point> getPoints(String path);
 
-    void saveCrimes(String crimes, String path) throws DAOException;
+    void startWritingIn(String path);
+
+    void endWritingIn(String path);
+
+    void write(String path, List<Crime> crimes);
 }

@@ -64,7 +64,7 @@ public class Main {
             if (properties.getProperty(PROPERTY_SAVE).equals(PROPERTY_SAVE_IN_FILE)) {
                 String savePath = properties.getProperty(PROPERTY_OUTPUT);
 
-//                policeAPIService.processCrimesToFile(start, end, path, savePath);
+                policeAPIService.processCrimesToFile(start, end, path, savePath);
 
             }
 
