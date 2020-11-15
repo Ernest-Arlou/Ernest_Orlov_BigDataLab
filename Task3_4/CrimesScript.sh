@@ -56,11 +56,15 @@ then
   return 1
 fi
 
+
 sudo -u postgres psql -d crimes -c "
 TRUNCATE TABLE \"Outcome-status\" CASCADE;
 TRUNCATE TABLE \"Street\" CASCADE;
 TRUNCATE TABLE \"Location\" CASCADE;
 TRUNCATE TABLE \"Crimes\" CASCADE;
+
+ALTER SEQUENCE \"Outcome-status_id_seq\" RESTART WITH 1;
+ALTER SEQUENCE \"Location_id_seq\" RESTART WITH 1;
 "
 }
 
@@ -108,12 +112,7 @@ sudo -u postgres psql -c "
 ################################################################################
 create_db_command(){
 sudo -u postgres psql -c "
-CREATE DATABASE crimes
-    WITH 
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;"
+CREATE DATABASE crimes"
 }
 ################################################################################
 create_db_tables_command(){

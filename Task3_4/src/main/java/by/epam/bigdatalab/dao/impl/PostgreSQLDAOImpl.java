@@ -13,6 +13,7 @@ import org.codejargon.fluentjdbc.api.query.Query;
 import javax.sql.DataSource;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class PostgreSQLDAOImpl implements DataBaseDAO {
@@ -64,24 +65,70 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
 
     @Override
     public void saveCrimesToDB(Set<Crime> crimes) {
+
         saveCrimeLocationStreets(crimes);
-        saveCrimeLocations(crimes);
-        saveCrimeOutcomeStatuses(crimes);
-        saveCrimes(crimes);
+//        saveCrimeLocations(crimes);
+//        saveCrimeOutcomeStatuses(crimes);
+//        saveCrimes(crimes);
 
     }
 
     private void saveCrimeLocationStreets(Set<Crime> crimes) {
-        Set<CrimeLocationStreet> existingCrimeLocationStreets = new HashSet<>(getAllCrimeLocationStreets());
-
         for (Crime crime : crimes) {
             CrimeLocationStreet street = crime.getLocation().getStreet();
-            if (!existingCrimeLocationStreets.contains(street)) {
+            if (getCrimeLocationStreetById(street.getId()) == null) {
                 addCrimeLocationStreet(street);
-                existingCrimeLocationStreets.add(street);
             }
         }
     }
+
+
+//    private void saveCrimeLocationStreets(Set<Crime> crimes) {
+//        for (Crime crime : crimes) {
+//            CrimeLocationStreet street = crime.getLocation().getStreet();
+//            try {
+//                addCrimeLocationStreet(street);
+//                addCrimeLocation(crime.getLocation());
+//            } catch (FluentJdbcSqlException e) {
+//
+//            }
+//
+//        }
+
+
+//        Set<CrimeLocationStreet> existingCrimeLocationStreets = new HashSet<>(getAllCrimeLocationStreets());
+//
+//        for (Crime crime : crimes) {
+//            CrimeLocationStreet street = crime.getLocation().getStreet();
+//            if (!existingCrimeLocationStreets.contains(street)) {
+//                addCrimeLocationStreet(street);
+//                existingCrimeLocationStreets.add(street);
+//            }
+//        }
+//    }
+
+//    private void saveCrimeLocations(Set<Crime> crimes) {
+//        Set<CrimeLocation> existingCrimeLocations = new HashSet<>(getAllCrimeLocations());
+//        for (Crime crime : crimes) {
+//            CrimeLocation crimeLocation = crime.getLocation();
+//            if (!existingCrimeLocations.contains(crimeLocation)) {
+//                addCrimeLocation(crimeLocation);
+//                existingCrimeLocations.add(crimeLocation);
+//            }
+//        }
+//    }
+
+//        private void saveCrimeLocationStreets(Set<Crime> crimes) {
+//            Set<CrimeLocationStreet> existingCrimeLocationStreets = new HashSet<>(getAllCrimeLocationStreets());
+//
+//        for (Crime crime : crimes) {
+//            CrimeLocationStreet street = crime.getLocation().getStreet();
+//            if (!existingCrimeLocationStreets.contains(street)) {
+//                addCrimeLocationStreet(street);
+//                existingCrimeLocationStreets.add(street);
+//            }
+//        }
+//    }
 
     private void saveCrimeLocations(Set<Crime> crimes) {
         Set<CrimeLocation> existingCrimeLocations = new HashSet<>(getAllCrimeLocations());
@@ -211,11 +258,13 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
     }
 
     private CrimeLocationStreet getCrimeLocationStreetById(long streetId) {
-        return query.select(GET_STREET_BY_ID)
-                .params(streetId).singleResult((resultSet ->
+        Optional<CrimeLocationStreet> street = query
+                .select(GET_STREET_BY_ID)
+                .params(streetId).firstResult((resultSet ->
                         new CrimeLocationStreet(resultSet.getLong(STREET_ID),
                                 resultSet.getString(STREET_NAME)
                         )));
+        return street.orElse(null);
     }
 
     private CrimeLocation getCrimeLocationById(long crimeLocationId) {

@@ -78,7 +78,7 @@ public class PoliceAPIService {
             if ((i != 0) && (i % CONNECTIONS_LIMIT == 0)) {
                 startingDelaySeconds += CONNECTIONS_LIMIT_PER_TIME_SECONDS;
             }
-            ses.schedule(new CrimePointRequest(urls.get(i), crimesSet), startingDelaySeconds, TimeUnit.SECONDS);
+            ses.schedule(new CrimePointThread(urls.get(i), crimesSet), startingDelaySeconds, TimeUnit.SECONDS);
         }
 
         awaitTerminationAfterShutdown(ses);
