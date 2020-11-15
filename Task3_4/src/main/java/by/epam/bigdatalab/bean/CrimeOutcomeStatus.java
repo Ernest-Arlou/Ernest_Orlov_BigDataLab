@@ -1,6 +1,5 @@
 package by.epam.bigdatalab.bean;
 
-import by.epam.bigdatalab.Util;
 import by.epam.bigdatalab.service.DateUtil;
 import com.alibaba.fastjson.annotation.JSONField;
 

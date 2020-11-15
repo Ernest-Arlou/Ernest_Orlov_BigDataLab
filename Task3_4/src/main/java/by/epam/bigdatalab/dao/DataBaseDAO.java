@@ -2,10 +2,10 @@ package by.epam.bigdatalab.dao;
 
 import by.epam.bigdatalab.bean.Crime;
 
-import java.util.Set;
+import java.util.List;
 
 
 public interface DataBaseDAO {
 
-    void saveCrimesToDB(Set<Crime> crimes);
+    void saveCrimesToDB(List<Crime> crimes);
 }

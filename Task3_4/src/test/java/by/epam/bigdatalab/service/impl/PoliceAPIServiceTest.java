@@ -2,7 +2,7 @@ package by.epam.bigdatalab.service.impl;
 
 import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.dao.connectionpool.ConnectionPoolHolder;
-import by.epam.bigdatalab.dao.factory.DAOFactory;
+import by.epam.bigdatalab.dao.DAOHolder;
 import by.epam.bigdatalab.service.PoliceAPIService;
 import by.epam.bigdatalab.service.Request;
 import by.epam.bigdatalab.service.ServiceException;
@@ -16,7 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class PoliceAPIServiceTest {
@@ -26,8 +25,8 @@ public class PoliceAPIServiceTest {
     private static final String PATH = "E:\\University_and_Work\\Java_Training\\BigData\\Remote\\Task3_4\\src\\main\\resources\\LondonStations.csv";
     private static final String SAVE_PATH = "E:\\University_and_Work\\Java_Training\\BigData\\Remote\\Task3_4\\src\\main\\resources\\Crimes.txt";
 
-    LocalDate startDate = LocalDate.of(2018, 1, 1);
-    LocalDate endDate = LocalDate.of(2018, 5, 1);
+    LocalDate startDate = LocalDate.of(2019, 5, 1);
+    LocalDate endDate = LocalDate.of(2019, 5, 1);
 
     @BeforeClass
     public static void initializeConnectionPool() {
@@ -57,9 +56,8 @@ public class PoliceAPIServiceTest {
             logger.error("MalformedURLException in PoliceAPIServiceImp method buildURL()", e);
         }
 
-        Set<Crime> crimes = new HashSet<>(Request.doRequest(url, Crime.class));
-        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(crimes);
-        System.out.println(crimes);
+        DAOHolder.getInstance().getDataBaseDAO().saveCrimesToDB(Request.doRequest(url, Crime.class));
+
         
         
     }

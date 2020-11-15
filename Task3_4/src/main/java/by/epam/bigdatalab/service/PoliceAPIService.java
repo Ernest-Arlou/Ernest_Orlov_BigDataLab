@@ -1,10 +1,8 @@
 package by.epam.bigdatalab.service;
 
-import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.bean.Point;
 import by.epam.bigdatalab.dao.DAOException;
-import by.epam.bigdatalab.dao.factory.DAOFactory;
-import com.alibaba.fastjson.JSON;
+import by.epam.bigdatalab.dao.DAOHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +10,10 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class PoliceAPIService {
     private static final int CORE_POOL_SIZE = 30;
@@ -39,25 +39,22 @@ public class PoliceAPIService {
     }
 
     public void processCrimesToDB(LocalDate startDate, LocalDate endDate, String path) throws ServiceException {
-        DAOFactory.getInstance().getDataBaseDAO().saveCrimesToDB(processCrimes(startDate, endDate, path));
+        processCrimes(startDate, endDate, path);
     }
 
-    public void processCrimesToFile(LocalDate startDate, LocalDate endDate, String pathToPoints, String pathToSaveFile) throws ServiceException {
-        String jsonOutput = JSON.toJSONString(processCrimes(startDate, endDate, pathToPoints));
-        try {
-            DAOFactory.getInstance().getFileDAO().saveCrimes(jsonOutput, pathToSaveFile);
-        } catch (DAOException e) {
-            logger.error("DAOException in PoliceAPIServiceImp method saveCrimesInFile()");
-            throw new ServiceException("Can't save crimes in file", e);
-        }
-    }
+//    public void processCrimesToFile(LocalDate startDate, LocalDate endDate, String pathToPoints, String pathToSaveFile) throws ServiceException {
+//        String jsonOutput = JSON.toJSONString(processCrimes(startDate, endDate, pathToPoints));
+//        try {
+//            DAOHolder.getInstance().getFileDAO().saveCrimes(jsonOutput, pathToSaveFile);
+//        } catch (DAOException e) {
+//            logger.error("DAOException in PoliceAPIServiceImp method saveCrimesInFile()");
+//            throw new ServiceException("Can't save crimes in file", e);
+//        }
+//    }
 
 
-    private Set<Crime> processCrimes(LocalDate startDate, LocalDate endDate, String path) throws ServiceException {
-        List<Point> points = null;
-        Set<Crime> crimesSet = null;
-
-        points = getPointsFromFile(path);
+    private void processCrimes(LocalDate startDate, LocalDate endDate, String path) throws ServiceException {
+        List<Point> points = getPointsFromFile(path);
         if (points == null) {
             logger.error("No points in file in PoliceAPIServiceImp method processCrimes()");
             throw new ServiceException("No points in file");
@@ -66,8 +63,6 @@ public class PoliceAPIService {
         List<LocalDate> localDates = DateUtil.buildDateRange(startDate, endDate);
         List<URL> urls = URLManager.buildCrimesURLs(localDates, points);
 
-
-        crimesSet = new CopyOnWriteArraySet<>();
         ScheduledExecutorService ses = new ScheduledThreadPoolExecutor(CORE_POOL_SIZE);
 
         System.out.println(urls.size());
@@ -78,7 +73,7 @@ public class PoliceAPIService {
             if ((i != 0) && (i % CONNECTIONS_LIMIT == 0)) {
                 startingDelaySeconds += CONNECTIONS_LIMIT_PER_TIME_SECONDS;
             }
-            ses.schedule(new CrimePointThread(urls.get(i), crimesSet), startingDelaySeconds, TimeUnit.SECONDS);
+            ses.schedule(new CrimePointThread(urls.get(i)), startingDelaySeconds, TimeUnit.SECONDS);
         }
 
         awaitTerminationAfterShutdown(ses);
@@ -88,21 +83,16 @@ public class PoliceAPIService {
         System.out.println(end);
 
 
-        return crimesSet;
     }
 
     private List<Point> getPointsFromFile(String path) throws ServiceException {
         try {
-            return DAOFactory.getInstance().getFileDAO().getPoints(path);
+            return DAOHolder.getInstance().getFileDAO().getPoints(path);
         } catch (DAOException e) {
             logger.error("DAOException in PoliceAPIServiceImp method processCrimes()");
             throw new ServiceException("DAOException in getPointsFromFile", e);
         }
     }
-
-
-
-
 
 
 }
