@@ -7,7 +7,6 @@ import by.epam.bigdatalab.dao.DAOHolder;
 import by.epam.bigdatalab.dao.connectionpool.ConnectionPoolHolder;
 import by.epam.bigdatalab.service.PoliceAPIService;
 import by.epam.bigdatalab.service.Request;
-import by.epam.bigdatalab.service.ServiceException;
 import by.epam.bigdatalab.service.URLManager;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -15,8 +14,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -41,12 +38,12 @@ public class PoliceAPIServiceTest {
     }
 
     @Test
-    public void processCrimesToDB() throws ServiceException {
+    public void processCrimesToDB() {
         policeAPIService.processCrimesToDB(startDate, endDate, PATH_TO_POINTS);
     }
 
     @Test
-    public void processCrimesToFile() throws ServiceException {
+    public void processCrimesToFile() {
         policeAPIService.processCrimesToFile(startDate, endDate, PATH_TO_POINTS, SAVE_PATH);
     }
 
@@ -54,8 +51,7 @@ public class PoliceAPIServiceTest {
     public void onePoint() {
         String str = "https://data.police.uk/api/crimes-street/all-crime?lat=52.629729&lng=-1.131592&date=2018-01";
 
-        DAOHolder.getInstance().getDataBaseDAO().saveCrimesToDB(Request.doRequest(URLManager.createURL(str), Crime.class));
-
+        DAOHolder.getInstance().getDataBaseDAO().saveCrimes(Request.doRequest(URLManager.createURL(str), Crime.class));
 
     }
 
@@ -69,8 +65,12 @@ public class PoliceAPIServiceTest {
     @Test
     public void getStops() {
         List<StopAndSearch> stopAndSearches = policeAPIService.getStopsAnsSearches();
-        System.out.println(stopAndSearches.size());
-        System.out.println(stopAndSearches);
+        DAOHolder.getInstance().getDataBaseDAO().saveStopAndSearches(stopAndSearches);
+    }
+
+    @Test
+    public void processStopsAndSearchesToDB(){
+        policeAPIService.processStopsAndSearchesToDB(startDate,endDate);
     }
 
 }

@@ -5,6 +5,7 @@ import by.epam.bigdatalab.bean.Point;
 import by.epam.bigdatalab.bean.StopAndSearch;
 import by.epam.bigdatalab.dao.DAOHolder;
 import by.epam.bigdatalab.service.thread.DBCrimePointThread;
+import by.epam.bigdatalab.service.thread.DBStopByForceThread;
 import by.epam.bigdatalab.service.thread.FileCrimePointThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,16 @@ public class PoliceAPIService {
 
     public List<StopAndSearch> getStopsAnsSearches() {
         return Request.doRequest(URLManager.createURL("https://data.police.uk/api/stops-force?force=avon-and-somerset&date=2018-01"), StopAndSearch.class);
+    }
+
+    public void processStopsAndSearchesToDB(LocalDate startDate, LocalDate endDate){
+        List<Runnable> threads = new LinkedList<>();
+
+        for (URL url : URLManager.buildStopsAndSearchesURLs(startDate,endDate,getForces())) {
+         threads.add(new DBStopByForceThread(url));
+        }
+
+        executeThreads(threads);
     }
 
     public void processCrimesToDB(LocalDate startDate, LocalDate endDate, String pathToPoints)   {

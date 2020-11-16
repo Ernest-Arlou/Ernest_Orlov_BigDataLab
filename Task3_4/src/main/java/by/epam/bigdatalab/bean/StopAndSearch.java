@@ -52,6 +52,9 @@ public class StopAndSearch {
     @JSONField(name = "removal_of_more_than_outer_clothing")
     boolean removalOfMoreThanOuterClothing;
 
+    public String getOutcome() {
+        return outcome;
+    }
 
     public String getType() {
         return type;
