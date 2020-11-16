@@ -1,6 +1,5 @@
 package by.epam.bigdatalab.dao;
 
-import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.bean.Point;
 
 import java.util.List;
@@ -12,5 +11,6 @@ public interface FileDAO {
 
     void endWritingIn(String path);
 
-    void write(String path, List<Crime> crimes);
+    <T> void write(String path, List<T> objects);
+
 }

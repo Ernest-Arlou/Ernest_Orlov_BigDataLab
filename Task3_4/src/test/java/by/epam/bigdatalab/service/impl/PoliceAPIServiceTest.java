@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class PoliceAPIServiceTest {
@@ -22,9 +23,9 @@ public class PoliceAPIServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(PoliceAPIServiceTest.class);
 
     private static final String PATH_TO_POINTS = "E:\\University_and_Work\\Java_Training\\BigData\\Remote\\Task3_4\\src\\main\\resources\\LondonStations.csv";
-    private static final String SAVE_PATH = "E:\\University_and_Work\\Java_Training\\BigData\\Remote\\Task3_4\\src\\main\\resources\\Crimes.txt";
+    private static final String PATH_TO_SAVE_FILE = "E:\\University_and_Work\\Java_Training\\BigData\\Remote\\Task3_4\\src\\main\\resources\\Crimes.txt";
     private final PoliceAPIService policeAPIService = new PoliceAPIService();
-    LocalDate startDate = LocalDate.of(2019, 5, 1);
+    LocalDate startDate = LocalDate.of(2019, 1, 1);
     LocalDate endDate = LocalDate.of(2019, 5, 1);
 
     @BeforeClass
@@ -39,12 +40,15 @@ public class PoliceAPIServiceTest {
 
     @Test
     public void processCrimesToDB() {
+        LocalDateTime start = LocalDateTime.now();
         policeAPIService.processCrimesToDB(startDate, endDate, PATH_TO_POINTS);
+        System.out.println(start);
+        System.out.println(LocalDateTime.now());
     }
 
     @Test
     public void processCrimesToFile() {
-        policeAPIService.processCrimesToFile(startDate, endDate, PATH_TO_POINTS, SAVE_PATH);
+        policeAPIService.processCrimesToFile(startDate, endDate, PATH_TO_POINTS, PATH_TO_SAVE_FILE);
     }
 
     @Test
@@ -56,21 +60,27 @@ public class PoliceAPIServiceTest {
     }
 
     @Test
+    public void oneStopAndSearch() {
+        String str = "https://data.police.uk/api/stops-force?force=avon-and-somerset&date=2018-01";
+
+        DAOHolder.getInstance().getDataBaseDAO().saveStopAndSearches(  Request.doRequest(URLManager.createURL(str), StopAndSearch.class));
+
+    }
+
+    @Test
     public void getForces() {
         List<Force> forces = policeAPIService.getForces();
-        System.out.println(forces.size());
-        System.out.println(forces);
+    }
+
+
+    @Test
+    public void processStopsAndSearchesToDB() {
+        policeAPIService.processStopsAndSearchesToDB(startDate, endDate);
     }
 
     @Test
-    public void getStops() {
-        List<StopAndSearch> stopAndSearches = policeAPIService.getStopsAnsSearches();
-        DAOHolder.getInstance().getDataBaseDAO().saveStopAndSearches(stopAndSearches);
-    }
-
-    @Test
-    public void processStopsAndSearchesToDB(){
-        policeAPIService.processStopsAndSearchesToDB(startDate,endDate);
+    public void processStopsAndSearchesToFile() {
+        policeAPIService.processStopsAndSearchesToFile(startDate, endDate, PATH_TO_SAVE_FILE);
     }
 
 }

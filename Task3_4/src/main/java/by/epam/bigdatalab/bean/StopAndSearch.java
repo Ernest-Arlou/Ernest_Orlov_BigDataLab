@@ -13,7 +13,7 @@ public class StopAndSearch {
     @JSONField(name = "involved_person")
     boolean involvedPerson;
 
-    @JSONField(name = "datetime")
+    @JSONField(name = "datetime", format = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     Date datetime;
 
     @JSONField(name = "operation")
@@ -54,6 +54,10 @@ public class StopAndSearch {
 
     public String getOutcome() {
         return outcome;
+    }
+
+    public void setOutcome(String outcome) {
+        this.outcome = outcome;
     }
 
     public String getType() {
@@ -154,10 +158,6 @@ public class StopAndSearch {
 
     public String isOutcome() {
         return outcome;
-    }
-
-    public void setOutcome(String outcome) {
-        this.outcome = outcome;
     }
 
     public String getOutcomeLinkedToObjectOfSearch() {

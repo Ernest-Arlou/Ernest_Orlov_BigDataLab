@@ -63,7 +63,7 @@ public class URLManager {
         return urls;
     }
 
-    public static URL createURL(String urlStr){
+    public static URL createURL(String urlStr) {
         URL url = null;
         try {
             url = new URL(urlStr);
@@ -76,9 +76,8 @@ public class URLManager {
 
     private static URL buildURL(String uri, Map<String, Object> parameters) {
         String urlStr = POLICE_API + uri + buildURLParameters(parameters);
-       return createURL(urlStr);
+        return createURL(urlStr);
     }
-
 
 
     private static String buildURLParameters(Map<String, Object> parameters) {

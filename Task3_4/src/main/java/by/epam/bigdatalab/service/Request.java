@@ -8,13 +8,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
 
 public class Request {
-    private static final int CONNECTION_TIMEOUT = 6000;
-    private static final int CONNECTION_READ_TIMEOUT = 6000;
+    private static final int CONNECTION_TIMEOUT = 15000;
+    private static final int CONNECTION_READ_TIMEOUT = 25000;
 
     private static final Logger logger = LoggerFactory.getLogger(Request.class);
     private static final int BUFFER = 1024;
@@ -40,10 +39,8 @@ public class Request {
             }
 
 
-        } catch (ProtocolException e) {
-            logger.error("ProtocolException in PoliceAPIServiceImp method doRequest()", e);
         } catch (IOException e) {
-            logger.error("IOException in PoliceAPIServiceImp method doRequest()", e);
+            logger.error(url.toString() + e.toString());
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -58,8 +55,11 @@ public class Request {
         try {
             responseCode = connection.getResponseCode();
         } catch (IOException e) {
-            logger.error("IOException in PoliceAPIServiceImp method gotConnection()", e);
+            logger.error(connection.toString() + " " + e.toString());
 
+        }
+        if (responseCode == 429){
+            System.out.println("Too Many Requests");
         }
 
         return responseCode == 200;

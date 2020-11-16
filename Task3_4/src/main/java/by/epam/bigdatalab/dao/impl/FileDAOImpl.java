@@ -1,6 +1,5 @@
 package by.epam.bigdatalab.dao.impl;
 
-import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.bean.Point;
 import by.epam.bigdatalab.dao.FileDAO;
 import com.alibaba.fastjson.JSON;
@@ -75,10 +74,8 @@ public class FileDAOImpl implements FileDAO {
     }
 
     @Override
-    public synchronized void write(String path, List<Crime> crimes) {
-        String out = JSON.toJSONString(crimes);
-
-//        String out = "[{\"category\":\"anti-social-behaviour\",\"location_type\":\"Force\",\"location\":{\"latitude\":\"52.635184\",\"street\":{\"id\":883410,\"name\":\"On or near Shopping Area\"},\"longitude\":\"-1.135455\"},\"context\":\"\",\"outcome_status\":null,\"persistent_id\":\"\",\"id\":62407437,\"location_subtype\":\"\",\"month\":\"2018-01\"}]";
+    public synchronized <T> void write(String path, List<T> objects) {
+        String out = JSON.toJSONString(objects);
 
         out = out.substring(1, out.length() - 1);
 

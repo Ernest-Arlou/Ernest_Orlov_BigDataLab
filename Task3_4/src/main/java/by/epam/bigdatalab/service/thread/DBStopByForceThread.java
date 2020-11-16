@@ -1,6 +1,5 @@
 package by.epam.bigdatalab.service.thread;
 
-import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.bean.StopAndSearch;
 import by.epam.bigdatalab.dao.DAOHolder;
 import by.epam.bigdatalab.service.Request;

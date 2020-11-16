@@ -2,11 +2,11 @@ package by.epam.bigdatalab.service;
 
 import by.epam.bigdatalab.bean.Force;
 import by.epam.bigdatalab.bean.Point;
-import by.epam.bigdatalab.bean.StopAndSearch;
 import by.epam.bigdatalab.dao.DAOHolder;
 import by.epam.bigdatalab.service.thread.DBCrimePointThread;
 import by.epam.bigdatalab.service.thread.DBStopByForceThread;
 import by.epam.bigdatalab.service.thread.FileCrimePointThread;
+import by.epam.bigdatalab.service.thread.FileStopByForceThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +20,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class PoliceAPIService {
-    private static final int CORE_POOL_SIZE = 30;
-    private static final int CONNECTIONS_LIMIT = 15;
+    private static final int NUMBER_OF_REQUESTS_PER_OPERATION = 3;
+    private static final int CORE_POOL_SIZE = 8;
+    private static final int CONNECTIONS_LIMIT = 11;
     private static final int CONNECTIONS_LIMIT_PER_TIME_SECONDS = 1;
     private static final int FORCED_THREAD_TERMINATION_SECONDS = 120;
     private static final String FORCES_URL = "https://data.police.uk/api/forces";
@@ -35,10 +36,10 @@ public class PoliceAPIService {
             if (!threadPool.awaitTermination(FORCED_THREAD_TERMINATION_SECONDS, TimeUnit.SECONDS)) {
                 threadPool.shutdownNow();
             }
-        } catch (InterruptedException ex) {
+        } catch (InterruptedException e) {
             threadPool.shutdownNow();
             Thread.currentThread().interrupt();
-            logger.error("InterruptedException in PoliceAPIServiceImp method awaitTerminationAfterShutdown()");
+            logger.error(e.toString());
             throw new RuntimeException();
         }
     }
@@ -47,21 +48,17 @@ public class PoliceAPIService {
         return Request.doRequest(URLManager.createURL(FORCES_URL), Force.class);
     }
 
-    public List<StopAndSearch> getStopsAnsSearches() {
-        return Request.doRequest(URLManager.createURL("https://data.police.uk/api/stops-force?force=avon-and-somerset&date=2018-01"), StopAndSearch.class);
-    }
-
-    public void processStopsAndSearchesToDB(LocalDate startDate, LocalDate endDate){
+    public void processStopsAndSearchesToDB(LocalDate startDate, LocalDate endDate) {
         List<Runnable> threads = new LinkedList<>();
 
-        for (URL url : URLManager.buildStopsAndSearchesURLs(startDate,endDate,getForces())) {
-         threads.add(new DBStopByForceThread(url));
+        for (URL url : URLManager.buildStopsAndSearchesURLs(startDate, endDate, getForces())) {
+            threads.add(new DBStopByForceThread(url));
         }
 
         executeThreads(threads);
     }
 
-    public void processCrimesToDB(LocalDate startDate, LocalDate endDate, String pathToPoints)   {
+    public void processCrimesToDB(LocalDate startDate, LocalDate endDate, String pathToPoints) {
         List<Runnable> threads = new LinkedList<>();
 
         for (URL url : URLManager.buildCrimesURLs(startDate, endDate, getPointsFromFile(pathToPoints))) {
@@ -70,13 +67,26 @@ public class PoliceAPIService {
         executeThreads(threads);
     }
 
-    public void processCrimesToFile(LocalDate startDate, LocalDate endDate, String pathToPoints, String pathToSaveFile)   {
+    public void processCrimesToFile(LocalDate startDate, LocalDate endDate, String pathToPoints, String pathToSaveFile) {
         DAOHolder.getInstance().getFileDAO().startWritingIn(pathToSaveFile);
 
         List<Runnable> threads = new LinkedList<>();
 
         for (URL url : URLManager.buildCrimesURLs(startDate, endDate, getPointsFromFile(pathToPoints))) {
             threads.add(new FileCrimePointThread(url, pathToSaveFile));
+        }
+        executeThreads(threads);
+
+        DAOHolder.getInstance().getFileDAO().endWritingIn(pathToSaveFile);
+    }
+
+    public void processStopsAndSearchesToFile(LocalDate startDate, LocalDate endDate, String pathToSaveFile) {
+        DAOHolder.getInstance().getFileDAO().startWritingIn(pathToSaveFile);
+
+        List<Runnable> threads = new LinkedList<>();
+
+        for (URL url : URLManager.buildStopsAndSearchesURLs(startDate, endDate, getForces())) {
+            threads.add(new FileStopByForceThread(url, pathToSaveFile));
         }
         executeThreads(threads);
 
@@ -94,9 +104,13 @@ public class PoliceAPIService {
 
     private void executeThreads(List<Runnable> threads) {
         ScheduledExecutorService scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(CORE_POOL_SIZE);
+        int maxCon = CONNECTIONS_LIMIT / NUMBER_OF_REQUESTS_PER_OPERATION;
+        if (maxCon < 1){
+            maxCon = 1;
+        }
         int startingDelaySeconds = 0;
         for (int i = 0; i < threads.size(); i++) {
-            if ((i != 0) && (i % CONNECTIONS_LIMIT == 0)) {
+            if ((i != 0) && (i % maxCon == 0)) {
                 startingDelaySeconds += CONNECTIONS_LIMIT_PER_TIME_SECONDS;
             }
             scheduledThreadPoolExecutor.schedule(threads.get(i), startingDelaySeconds, TimeUnit.SECONDS);
