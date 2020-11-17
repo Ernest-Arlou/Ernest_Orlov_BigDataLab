@@ -21,14 +21,17 @@ import java.util.concurrent.TimeUnit;
 
 public class PoliceAPIService {
     private static final int NUMBER_OF_REQUESTS_PER_OPERATION = 3;
-    private static final int CORE_POOL_SIZE = 8;
-    private static final int CONNECTIONS_LIMIT = 11;
+    private static final int CORE_POOL_SIZE = 16;
+    private static final int CONNECTIONS_LIMIT = 14;
     private static final int CONNECTIONS_LIMIT_PER_TIME_SECONDS = 1;
-    private static final int FORCED_THREAD_TERMINATION_SECONDS = 120;
+    private static final int FORCED_THREAD_TERMINATION_SECONDS = 12000;
     private static final String FORCES_URL = "https://data.police.uk/api/forces";
 
 
+
     private static final Logger logger = LoggerFactory.getLogger(PoliceAPIService.class);
+
+
 
     public static void awaitTerminationAfterShutdown(ExecutorService threadPool) {
         threadPool.shutdown();
@@ -109,10 +112,13 @@ public class PoliceAPIService {
             maxCon = 1;
         }
         int startingDelaySeconds = 0;
+
+        int count = 0;
         for (int i = 0; i < threads.size(); i++) {
             if ((i != 0) && (i % maxCon == 0)) {
                 startingDelaySeconds += CONNECTIONS_LIMIT_PER_TIME_SECONDS;
             }
+            count++;
             scheduledThreadPoolExecutor.schedule(threads.get(i), startingDelaySeconds, TimeUnit.SECONDS);
         }
         awaitTerminationAfterShutdown(scheduledThreadPoolExecutor);

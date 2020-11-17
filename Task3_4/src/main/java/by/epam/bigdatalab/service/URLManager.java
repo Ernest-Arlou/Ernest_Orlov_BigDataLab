@@ -21,14 +21,11 @@ public class URLManager {
     private static final String PARAMETER_FORCE = "force";
 
 
-    //  https://data.police.uk/api/stops-force?force=avon-and-somerset&date=2017-01
-
     private static final Logger logger = LoggerFactory.getLogger(URLManager.class);
 
 
     public static List<URL> buildCrimesURLs(LocalDate startDate, LocalDate endDate, List<Point> points) {
         List<LocalDate> localDateList = DateUtil.buildDateRange(startDate, endDate);
-
         List<URL> urls = new ArrayList<>();
         for (LocalDate localDate : localDateList) {
             for (Point point : points) {

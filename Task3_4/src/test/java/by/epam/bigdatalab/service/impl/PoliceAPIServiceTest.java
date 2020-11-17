@@ -25,8 +25,8 @@ public class PoliceAPIServiceTest {
     private static final String PATH_TO_POINTS = "E:\\University_and_Work\\Java_Training\\BigData\\Remote\\Task3_4\\src\\main\\resources\\LondonStations.csv";
     private static final String PATH_TO_SAVE_FILE = "E:\\University_and_Work\\Java_Training\\BigData\\Remote\\Task3_4\\src\\main\\resources\\Crimes.txt";
     private final PoliceAPIService policeAPIService = new PoliceAPIService();
-    LocalDate startDate = LocalDate.of(2019, 1, 1);
-    LocalDate endDate = LocalDate.of(2019, 5, 1);
+    LocalDate startDate = LocalDate.of(2018, 1, 1);
+    LocalDate endDate = LocalDate.of(2018, 5, 1);
 
     @BeforeClass
     public static void initializeConnectionPool() {
