@@ -72,8 +72,9 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
             .build();
     Query query = fluentJdbc.query();
 
+
     @Override
-    public synchronized void saveStopAndSearches(List<StopAndSearch> stopAndSearches) {
+    public void saveStopAndSearches(List<StopAndSearch> stopAndSearches) {
         List<Street> streets = new LinkedList<>();
         List<Location> locations = new LinkedList<>();
 
@@ -100,7 +101,7 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
     }
 
     @Override
-    public synchronized void saveCrimes(List<Crime> crimes) {
+    public void saveCrimes(List<Crime> crimes) {
         List<Street> streets = new LinkedList<>();
         List<Location> locations = new LinkedList<>();
         List<OutcomeStatus> outcomeStatuses = new LinkedList<>();
@@ -116,8 +117,10 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
             streets.add(crime.getLocation().getStreet());
         }
 
+
         saveStreets(streets);
         saveLocations(locations);
+
         saveOutcomeStatuses(outcomeStatuses);
         saveCrimesToDB(crimes);
 

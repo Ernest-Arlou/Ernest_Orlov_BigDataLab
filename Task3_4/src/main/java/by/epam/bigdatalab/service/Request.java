@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Request {
     private static final int CONNECTION_TIMEOUT = 15000;
-    private static final int CONNECTION_READ_TIMEOUT = 25000;
+    private static final int CONNECTION_READ_TIMEOUT = 45000;
 
     private static final Logger logger = LoggerFactory.getLogger(Request.class);
     private static final int BUFFER = 1024;

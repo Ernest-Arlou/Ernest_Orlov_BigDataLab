@@ -107,6 +107,7 @@ public class PoliceAPIService {
 
     private void executeThreads(List<Runnable> threads) {
         ScheduledExecutorService scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(CORE_POOL_SIZE);
+        System.out.println(threads.size());
         int maxCon = CONNECTIONS_LIMIT / NUMBER_OF_REQUESTS_PER_OPERATION;
         if (maxCon < 1){
             maxCon = 1;

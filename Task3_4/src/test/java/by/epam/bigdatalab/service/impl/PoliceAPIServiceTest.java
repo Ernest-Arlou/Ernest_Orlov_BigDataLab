@@ -44,6 +44,7 @@ public class PoliceAPIServiceTest {
         policeAPIService.processCrimesToDB(startDate, endDate, PATH_TO_POINTS);
         System.out.println(start);
         System.out.println(LocalDateTime.now());
+
     }
 
     @Test
