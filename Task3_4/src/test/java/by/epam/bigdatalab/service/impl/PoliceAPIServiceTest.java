@@ -34,6 +34,10 @@ public class PoliceAPIServiceTest {
         Assert.assertTrue(true);
     }
 
+    @Test
+    public void processCrimesToFile() {
+        System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+    }
 
 //
 //    @BeforeClass
