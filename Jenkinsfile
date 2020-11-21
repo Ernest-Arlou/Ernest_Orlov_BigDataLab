@@ -1,11 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Git checout') {
-            steps {
-                git branch: 'task_5', credentialsId: 'git_cred', url: 'https://github.com/Ernest-Orlov/Ernest_Orlov_BigDataLab.git'
-            }
-        }
+       
         stage('Quality Gates') {
             steps {
                 script{
