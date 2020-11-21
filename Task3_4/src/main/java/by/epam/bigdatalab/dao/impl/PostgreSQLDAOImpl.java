@@ -160,7 +160,7 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
     }
 
     private boolean streetExists(Street street) {
-        return getStreetById(street.getId()) != null;
+        return getStreetById(street.getId()) != -1;
     }
 
     private boolean locationExists(Location location) {
@@ -249,14 +249,12 @@ public class PostgreSQLDAOImpl implements DataBaseDAO {
                 .run();
     }
 
-    private Street getStreetById(long streetId) {
-        Optional<Street> street = query
+    private long getStreetById(long streetId) {
+        Optional<Long> id = query
                 .select(GET_STREET_BY_ID)
                 .params(streetId).firstResult((resultSet ->
-                        new Street(resultSet.getLong(ID_FIELD),
-                                resultSet.getString(STREET_NAME)
-                        )));
-        return street.orElse(null);
+                       (resultSet.getLong(ID_FIELD))));
+        return id.orElse(-1L);
     }
 
     private long getLocationId(Location location) {
