@@ -33,22 +33,22 @@ public class PoliceAPIServiceTest {
     public void processCrimesToDB() {
         Assert.assertTrue(true);
     }
-
+//
     @Test
     public void processCrimesToFile() {
         System.out.println("AAAAAAAAAAAAAAAAAAAAA");
     }
 
 //
-//    @BeforeClass
-//    public static void initializeConnectionPool() {
-//        ConnectionPoolHolder.getInstance().getConnectionPool().init();
-//    }
-//
-//    @AfterClass
-//    public static void disposeConnectionPool() {
-//        ConnectionPoolHolder.getInstance().getConnectionPool().dispose();
-//    }
+    @BeforeClass
+    public static void initializeConnectionPool() {
+        ConnectionPoolHolder.getInstance().getConnectionPool().init();
+    }
+
+    @AfterClass
+    public static void disposeConnectionPool() {
+        ConnectionPoolHolder.getInstance().getConnectionPool().dispose();
+    }
 //
 //    @Test
 //    public void processCrimesToDB() {
@@ -67,15 +67,20 @@ public class PoliceAPIServiceTest {
 //    public void onePoint() {
 //        String str = "https://data.police.uk/api/crimes-street/all-crime?lat=52.629729&lng=-1.131592&date=2018-01";
 //
-//        DAOHolder.getInstance().getDataBaseDAO().saveCrimes(Request.doRequest(URLManager.createURL(str), Crime.class));
+//        List<Crime> crimes = Request.doRequest(URLManager.createURL(str), Crime.class);
+//        Assert.assertNotNull(crimes);
+//        DAOHolder.getInstance().getDataBaseDAO().saveCrimes(crimes);
 //
 //    }
-//
+////
 //    @Test
 //    public void oneStopAndSearch() {
 //        String str = "https://data.police.uk/api/stops-force?force=avon-and-somerset&date=2018-01";
 //
-//        DAOHolder.getInstance().getDataBaseDAO().saveStopAndSearches(  Request.doRequest(URLManager.createURL(str), StopAndSearch.class));
+//        List<StopAndSearch> stopAndSearches =  Request.doRequest(URLManager.createURL(str), StopAndSearch.class);
+//        Assert.assertNotNull(stopAndSearches);
+//
+//        DAOHolder.getInstance().getDataBaseDAO().saveStopAndSearches(stopAndSearches);
 //
 //    }
 //
