@@ -2,8 +2,6 @@ package by.epam.bigdatalab.service;
 
 import by.epam.bigdatalab.bean.Force;
 import by.epam.bigdatalab.bean.Point;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -17,9 +15,6 @@ public class URLManager {
     private static final String PARAMETER_LONGITUDE = "lng";
     private static final String PARAMETER_DATE = "date";
     private static final String PARAMETER_FORCE = "force";
-
-
-    private static final Logger logger = LoggerFactory.getLogger(URLManager.class);
 
 
     public static List<String> buildCrimesURLs(LocalDate startDate, LocalDate endDate, List<Point> points) {

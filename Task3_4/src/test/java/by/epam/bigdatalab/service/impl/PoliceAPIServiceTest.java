@@ -5,7 +5,6 @@ import by.epam.bigdatalab.dao.DAOHolder;
 import by.epam.bigdatalab.dao.connectionpool.ConnectionPoolHolder;
 import by.epam.bigdatalab.service.PoliceAPIService;
 import by.epam.bigdatalab.service.Request;
-import by.epam.bigdatalab.service.URLManager;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -41,42 +40,44 @@ public class PoliceAPIServiceTest {
         ConnectionPoolHolder.getInstance().getConnectionPool().dispose();
     }
 
-    //    @Test
-//    public void processCrimesToDB() {
-//        Assert.assertTrue(true);
-//    }
+        @Test
+    public void processCrimesToDB() {
+        Assert.assertTrue(true);
+    }
 //
     @Test
     public void processCrimesToFile() throws IOException {
-        System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+//        System.out.println("AAAAAAAAAAAAAAAAAAAAA");
     }
 
     //
-    @Test
-    public void processCrimesToDB() {
-        LocalDateTime start = LocalDateTime.now();
-        policeAPIService.processCrimesToDB(startDate, endDate, PATH_TO_POINTS);
-        System.out.println(start);
-        System.out.println(LocalDateTime.now());
-    }
-//
+//    @Test
+//    public void processCrimesToDB() {
+//        LocalDateTime start = LocalDateTime.now();
+//        policeAPIService.processCrimesToDB(startDate, endDate, PATH_TO_POINTS);
+//        System.out.println(start);
+//        System.out.println(LocalDateTime.now());
+//    }
+
+    //
 //    @Test
 //    public void processCrimesToFile() {
 //        policeAPIService.processCrimesToFile(startDate, endDate, PATH_TO_POINTS, PATH_TO_SAVE_FILE);
 //    }
 //
-    @Test
-    public void onePoint() {
-        String str = "https://data.police.uk/api/crimes-street/all-crime?lat=52.629729&lng=-1.131592&date=2018-01";
+//    @Test
+//    public void onePoint() {
+//        String str = "https://data.police.uk/api/crimes-street/all-crime?lat=52.629729&lng=-1.131592&date=2018-01";
+//
+//        Queue<String> strings = new LinkedList<>();
+//        strings.add(str);
+//        List<Crime> crimes = Request.doRequest(strings, Crime.class);
+//        Assert.assertNotNull(crimes);
+//        DAOHolder.getInstance().getDataBaseDAO().saveCrimes(crimes);
+//
+//    }
 
-        Queue<String> strings = new LinkedList<>();
-        strings.add(str);
-        List<Crime> crimes = Request.doRequest(strings, Crime.class);
-        Assert.assertNotNull(crimes);
-        DAOHolder.getInstance().getDataBaseDAO().saveCrimes(crimes);
-
-    }
-////
+    ////
 //    @Test
 //    public void oneStopAndSearch() {
 //        String str = "https://data.police.uk/api/stops-force?force=avon-and-somerset&date=2018-01";

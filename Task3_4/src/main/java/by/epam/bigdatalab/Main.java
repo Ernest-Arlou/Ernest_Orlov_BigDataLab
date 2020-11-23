@@ -3,7 +3,6 @@ package by.epam.bigdatalab;
 
 import by.epam.bigdatalab.dao.connectionpool.ConnectionPoolHolder;
 import by.epam.bigdatalab.service.PoliceAPIService;
-import by.epam.bigdatalab.service.PoliceApiServiceHolder;
 import org.apache.commons.cli.*;
 
 import java.time.LocalDate;
@@ -43,7 +42,7 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
-        PoliceAPIService policeAPIService = PoliceApiServiceHolder.getInstance().getPoliceAPIService();
+        PoliceAPIService policeAPIService = new PoliceAPIService();
 
         Options options = new Options();
 

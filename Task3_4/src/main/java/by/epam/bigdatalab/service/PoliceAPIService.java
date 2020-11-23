@@ -22,7 +22,7 @@ public class PoliceAPIService {
     private static final int CONNECTIONS_LIMIT_PER_TIME_SECONDS = 1;
     private static final int FORCED_THREAD_TERMINATION_SECONDS = 12000;
     private static final String FORCES_URL = "https://data.police.uk/api/forces";
-
+    private static final PointsReader POINTS_READER = new PointsReader();
 
     private static final Logger logger = LoggerFactory.getLogger(PoliceAPIService.class);
 
@@ -52,7 +52,8 @@ public class PoliceAPIService {
 
         do {
             List<Runnable> threads = new LinkedList<>();
-            for (String url : urls) {
+
+            for (int i = 0; i < urls.size(); i++) {
                 threads.add(new DBStopByForceThread(urls));
             }
             executeThreads(threads);
@@ -64,7 +65,7 @@ public class PoliceAPIService {
 
         do {
             List<Runnable> threads = new LinkedList<>();
-            for (String url : urls) {
+            for (int i = 0; i < urls.size(); i++) {
                 threads.add(new DBCrimePointThread(urls));
             }
             executeThreads(threads);
@@ -77,7 +78,7 @@ public class PoliceAPIService {
         Queue<String> urls = new ConcurrentLinkedQueue<>(URLManager.buildCrimesURLs(startDate, endDate, getPointsFromFile(pathToPoints)));
         do {
             List<Runnable> threads = new LinkedList<>();
-            for (String url : urls) {
+            for (int i = 0; i < urls.size(); i++) {
                 threads.add(new FileCrimePointThread(urls, pathToSaveFile));
             }
             executeThreads(threads);
@@ -93,7 +94,7 @@ public class PoliceAPIService {
 
         do {
             List<Runnable> threads = new LinkedList<>();
-            for (String url : urls) {
+            for (int i = 0; i < urls.size(); i++) {
                 threads.add(new FileStopByForceThread(urls, pathToSaveFile));
             }
             executeThreads(threads);
@@ -103,7 +104,7 @@ public class PoliceAPIService {
     }
 
     private List<Point> getPointsFromFile(String path) {
-        List<Point> points = DAOHolder.getInstance().getFileDAO().getPoints(path);
+        List<Point> points = POINTS_READER.getPoints(path);
         if (points == null || points.isEmpty()) {
             logger.error("No points in file in PoliceAPIServiceImp method processCrimes()");
             throw new RuntimeException();

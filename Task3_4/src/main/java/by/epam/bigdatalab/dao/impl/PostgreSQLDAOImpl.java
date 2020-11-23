@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PostgreSQLDAOImpl implements DataBaseDAO {
-    private  static  final TablesHolder tablesHolder = TablesHolder.getInstance();
+    private static final TablesHolder tablesHolder = TablesHolder.getInstance();
 
     @Override
     public void saveStopAndSearches(List<StopAndSearch> stopAndSearches) {
