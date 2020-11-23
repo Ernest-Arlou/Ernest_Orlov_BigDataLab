@@ -95,10 +95,10 @@ public class PoliceAPIServiceTest {
 //    }
 //
 //
-    @Test
-    public void processStopsAndSearchesToDB() {
-        policeAPIService.processStopsAndSearchesToDB(startDate, endDate);
-    }
+//    @Test
+//    public void processStopsAndSearchesToDB() {
+//        policeAPIService.processStopsAndSearchesToDB(startDate, endDate);
+//    }
 //
 //    @Test
 //    public void processStopsAndSearchesToFile() {
