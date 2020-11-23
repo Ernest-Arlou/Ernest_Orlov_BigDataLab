@@ -18,10 +18,7 @@ public class DBCrimePointThread implements Runnable {
 
     @Override
     public void run() {
-
-
         List<Crime> crimeList = new LinkedList<>(Request.doRequest(urls, Crime.class));
-
         DAOHolder.getInstance().getDataBaseDAO().saveCrimes(crimeList);
     }
 }

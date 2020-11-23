@@ -18,7 +18,7 @@ import java.util.concurrent.*;
 
 public class PoliceAPIService {
     private static final int CORE_POOL_SIZE = 16;
-    private static final int CONNECTIONS_LIMIT = 5;
+    private static final int CONNECTIONS_LIMIT = 14;
     private static final int CONNECTIONS_LIMIT_PER_TIME_SECONDS = 1;
     private static final int FORCED_THREAD_TERMINATION_SECONDS = 12000;
     private static final String FORCES_URL = "https://data.police.uk/api/forces";
