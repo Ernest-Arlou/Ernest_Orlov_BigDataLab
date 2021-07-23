@@ -2,8 +2,7 @@
 fastjson, HikariCP, postgresql, fluentjdbc, commons-cli, junit, slf4j, log4j
 
 # Installation
-Run CrimesScript.sh in Linux or TableScript.sql in PostgreSQL
-Modify database.properties 
+Run CrimesScript.sh in Linux or TableScript.sql in PostgreSQL. Modify database.properties 
 
 # Java - Practical task
 __Deadline:__ 9 working days.  
