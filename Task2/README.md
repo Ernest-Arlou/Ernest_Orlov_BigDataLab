@@ -1,16 +1,16 @@
 ## Linux & Bash
 
-#### Linux Links:__
+#### Linux Links:
 - [UNIX / LINUX Tutorial](https://www.tutorialspoint.com/unix/index.htm)
 - [Inode explanation](http://teaching.idallen.com/cst8207/13w/notes/450_file_system.html#things-are-stored-in-index-nodes-inodes)
 
-#### Bash Links:__ 
+#### Bash Links:
 - [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/index.html)
 
 ## Task
-__Deadline:__ 4 working days.  
+Deadline: 4 working days.  
 
-__Disclaimer:__ In case of any questions related to the task please immediately contact any of the mentors to avoid misunderstanding.
+Disclaimer: In case of any questions related to the task please immediately contact any of the mentors to avoid misunderstanding.
 
 #### Legend
 After successful implementation of the task you should have a script which can help you easily preconfigure the fresh virtual machine with all required tools.
