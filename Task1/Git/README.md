@@ -92,14 +92,6 @@ For this task you should learn how to use **interactive rebase**, thus other way
 6. Check you log and compare it with the previous one. Look at the hash, date, commit message. Explain what changed and why.
 7. Check you reflog. Explain to you mentor what you can see and why.
 
-## Demo
-
-### Practical Part
-Mentee should be able to demonstrate Task 2 on demo session.
-
-### Theoretical Part
-Mentee should be able to answer questions during demo session.
-
 ## Extra Materials
 
 1. [Useful git commands](https://davidwalsh.name/git-commands)
