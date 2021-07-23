@@ -1,3 +1,6 @@
+# About
+Multithread [data.police.uk](https://data.police.uk/docs/) parser to PostgreSQL or file
+
 # Used technologies:
 fastjson, HikariCP, postgresql, fluentjdbc, commons-cli, junit, slf4j, log4j
 
