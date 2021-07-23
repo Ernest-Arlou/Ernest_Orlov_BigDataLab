@@ -1,14 +1,4 @@
 ### Maven
-Topics: 
-- What are build tools? Why are they used?
-- What can Maven manage?
-- What is a Maven Repository? What types are there?
-- What are Maven dependencies?
-- Name Maven scopes and their definitions.
-- Describe Maven lifecycles, phases, goals, tasks.
-- What are Maven Plugins?
-- What is pom.xml structure?
-- Be familiar with parents/multimodule projects.
 
 Links
 - [Maven Getting Started Guide](https://maven.apache.org/guides/getting-started/index.html)
