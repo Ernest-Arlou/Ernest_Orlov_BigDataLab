@@ -4,22 +4,23 @@ import by.epam.bigdatalab.bean.Crime;
 import by.epam.bigdatalab.dao.DAOHolder;
 import by.epam.bigdatalab.service.Request;
 
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class FileCrimePointThread implements Runnable {
-    private final URL url;
     private final String path;
+    private final Queue<String> urls;
 
-    public FileCrimePointThread(URL url, String path) {
-        this.url = url;
+
+    public FileCrimePointThread(Queue<String> urls, String path) {
+        this.urls = urls;
         this.path = path;
     }
 
     @Override
     public void run() {
-        List<Crime> crimeList = new LinkedList<>(Request.doRequest(url, Crime.class));
+        List<Crime> crimeList = new LinkedList<>(Request.doRequest(urls, Crime.class));
         DAOHolder.getInstance().getFileDAO().write(path, crimeList);
     }
 }

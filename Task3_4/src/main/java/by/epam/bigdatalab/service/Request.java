@@ -1,79 +1,65 @@
 package by.epam.bigdatalab.service;
 
 import com.alibaba.fastjson.JSON;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
+import java.util.Queue;
 
 public class Request {
-    private static final int CONNECTION_TIMEOUT = 15000;
-    private static final int CONNECTION_READ_TIMEOUT = 45000;
 
     private static final Logger logger = LoggerFactory.getLogger(Request.class);
-    private static final int BUFFER = 1024;
-    private static final String ENCODING = "UTF-8";
 
-    public static <T> List<T> doRequest(URL url, Class<T> type) {
-        HttpURLConnection connection = null;
-
+    public static <T> List<T> doRequest(Queue<String> urls, Class<T> type) {
         List<T> objects = null;
 
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpResponse response = null;
         try {
+            String url = urls.poll();
 
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(CONNECTION_TIMEOUT);
-            connection.setReadTimeout(CONNECTION_READ_TIMEOUT);
+            HttpGet request = new HttpGet(url);
+            response = httpClient.execute(request);
 
-            if (gotConnection(connection)) {
+            int responseCode = response.getStatusLine().getStatusCode();
 
-                InputStream inputStream = connection.getInputStream();
-
-                objects = JSON.parseArray(getStringFromStream(inputStream), type);
-
+            if (responseCode == 429) {
+                urls.add(url);
             }
 
+            if (responseCode == 200) {
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    String result = EntityUtils.toString(entity);
+                    objects = JSON.parseArray(result, type);
+                }
+            }
 
         } catch (IOException e) {
-            logger.error(url.toString() + e.toString());
+            logger.error(e.toString());
         } finally {
-            if (connection != null) {
-                connection.disconnect();
+            try {
+                if (response != null) {
+                    response.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.toString());
+            }
+            try {
+                httpClient.close();
+            } catch (IOException e) {
+                logger.error(e.toString());
             }
         }
-
         return objects;
     }
 
-    private static boolean gotConnection(HttpURLConnection connection) {
-        int responseCode = 0;
-        try {
-            responseCode = connection.getResponseCode();
-        } catch (IOException e) {
-            logger.error(connection.toString() + " " + e.toString());
-
-        }
-        if (responseCode == 429){
-            System.out.println("Too Many Requests");
-        }
-
-        return responseCode == 200;
-
-    }
-
-    public static String getStringFromStream(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[BUFFER];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
-        }
-        return result.toString(ENCODING);
-
-    }
 }

@@ -1,0 +1,77 @@
+pipeline {
+    agent any
+    stages {
+        stage('Git checout') {
+            steps {
+                git branch: 'task_5', credentialsId: 'git_cred', url: 'https://github.com/Ernest-Orlov/Ernest_Orlov_BigDataLab.git'
+            }
+        }
+        stage('Quality Gates') {
+            steps {
+                script{
+                    withSonarQubeEnv(credentialsId: 'sonar_cred') {
+                        bat '''
+                        cd %workspace%\\Task3_4
+                        mvn clean package sonar:sonar
+                        '''
+                    }
+                    timeout(time: 1, unit: 'HOURS'){
+                        def qg = waitForQualityGate()
+                        bat '''
+                        echo ${qg.status}
+                        '''
+                        if(qg.status != 'OK'){
+                            error "Pipeline aborted due to quality failure: ${qg.status}"
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+        stage('Build') {
+            steps{
+                bat '''
+                cd %workspace%
+                cd ..
+                md "builds"
+                cd builds
+                md "%BUILD_NUMBER%"
+                cd %workspace%\\Task3_4
+                mvn clean compile assembly:single
+                '''
+            }
+        }
+        
+        stage('Move') {
+            steps{
+                bat '''
+                cd %workspace%\\Task3_4\\target 
+                copy PoliceData-1.0-SNAPSHOT-jar-with-dependencies.jar %JENKINS_HOME%\\workspace\\builds\\%BUILD_NUMBER%
+                '''
+            }
+        }
+        
+        stage('Deploy') {
+            steps{
+                bat '''
+                cd %JENKINS_HOME%\\workspace\\
+                md "Launch"
+                del /q %JENKINS_HOME%\\workspace\\Launch\\*
+                for /d %%x in (%JENKINS_HOME%\\workspace\\Launch\\*) do @rd /s /q "%%x"
+                cd %JENKINS_HOME%\\workspace\\builds\\%BUILD_NUMBER%
+                copy PoliceData-1.0-SNAPSHOT-jar-with-dependencies.jar %JENKINS_HOME%\\workspace\\Launch
+                '''
+            }
+        }
+        
+        stage('Run') {
+            steps{
+             
+             bat '''cd %JENKINS_HOME%\\workspace\\Launch
+java -cp PoliceData-1.0-SNAPSHOT-jar-with-dependencies.jar by.epam.bigdatalab.Main -Dstart=2019-04 -Dend=2019-04 -Dmethod=crimes -Dpath=E:\\University_and_Work\\Java_Training\\BigData\\Remote\\Task3_4\\src\\main\\resources\\LondonStations.csv -Dsave=db'''
+                
+            }
+        }
+    }
+}

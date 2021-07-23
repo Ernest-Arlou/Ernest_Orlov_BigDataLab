@@ -10,27 +10,21 @@ import by.epam.bigdatalab.service.thread.FileStopByForceThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Queue;
+import java.util.concurrent.*;
 
 public class PoliceAPIService {
-    private static final int NUMBER_OF_REQUESTS_PER_OPERATION = 3;
-    private static final int CORE_POOL_SIZE = 16;
+    private static final int CORE_POOL_SIZE = 14;
     private static final int CONNECTIONS_LIMIT = 14;
     private static final int CONNECTIONS_LIMIT_PER_TIME_SECONDS = 1;
     private static final int FORCED_THREAD_TERMINATION_SECONDS = 12000;
     private static final String FORCES_URL = "https://data.police.uk/api/forces";
-
-
+    private static final PointsReader POINTS_READER = new PointsReader();
 
     private static final Logger logger = LoggerFactory.getLogger(PoliceAPIService.class);
-
 
 
     public static void awaitTerminationAfterShutdown(ExecutorService threadPool) {
@@ -48,37 +42,47 @@ public class PoliceAPIService {
     }
 
     public List<Force> getForces() {
-        return Request.doRequest(URLManager.createURL(FORCES_URL), Force.class);
+        Queue<String> strings = new LinkedList<>();
+        strings.add(FORCES_URL);
+        return Request.doRequest(strings, Force.class);
     }
 
     public void processStopsAndSearchesToDB(LocalDate startDate, LocalDate endDate) {
-        List<Runnable> threads = new LinkedList<>();
+        Queue<String> urls = new ConcurrentLinkedQueue<>(URLManager.buildStopsAndSearchesURLs(startDate, endDate, getForces()));
 
-        for (URL url : URLManager.buildStopsAndSearchesURLs(startDate, endDate, getForces())) {
-            threads.add(new DBStopByForceThread(url));
-        }
+        do {
+            List<Runnable> threads = new LinkedList<>();
 
-        executeThreads(threads);
+            for (int i = 0; i < urls.size(); i++) {
+                threads.add(new DBStopByForceThread(urls));
+            }
+            executeThreads(threads);
+        } while (!urls.isEmpty());
     }
 
     public void processCrimesToDB(LocalDate startDate, LocalDate endDate, String pathToPoints) {
-        List<Runnable> threads = new LinkedList<>();
+        Queue<String> urls = new ConcurrentLinkedQueue<>(URLManager.buildCrimesURLs(startDate, endDate, getPointsFromFile(pathToPoints)));
 
-        for (URL url : URLManager.buildCrimesURLs(startDate, endDate, getPointsFromFile(pathToPoints))) {
-            threads.add(new DBCrimePointThread(url));
-        }
-        executeThreads(threads);
+        do {
+            List<Runnable> threads = new LinkedList<>();
+            for (int i = 0; i < urls.size(); i++) {
+                threads.add(new DBCrimePointThread(urls));
+            }
+            executeThreads(threads);
+        } while (!urls.isEmpty());
     }
 
     public void processCrimesToFile(LocalDate startDate, LocalDate endDate, String pathToPoints, String pathToSaveFile) {
         DAOHolder.getInstance().getFileDAO().startWritingIn(pathToSaveFile);
 
-        List<Runnable> threads = new LinkedList<>();
-
-        for (URL url : URLManager.buildCrimesURLs(startDate, endDate, getPointsFromFile(pathToPoints))) {
-            threads.add(new FileCrimePointThread(url, pathToSaveFile));
-        }
-        executeThreads(threads);
+        Queue<String> urls = new ConcurrentLinkedQueue<>(URLManager.buildCrimesURLs(startDate, endDate, getPointsFromFile(pathToPoints)));
+        do {
+            List<Runnable> threads = new LinkedList<>();
+            for (int i = 0; i < urls.size(); i++) {
+                threads.add(new FileCrimePointThread(urls, pathToSaveFile));
+            }
+            executeThreads(threads);
+        } while (!urls.isEmpty());
 
         DAOHolder.getInstance().getFileDAO().endWritingIn(pathToSaveFile);
     }
@@ -86,18 +90,21 @@ public class PoliceAPIService {
     public void processStopsAndSearchesToFile(LocalDate startDate, LocalDate endDate, String pathToSaveFile) {
         DAOHolder.getInstance().getFileDAO().startWritingIn(pathToSaveFile);
 
-        List<Runnable> threads = new LinkedList<>();
+        Queue<String> urls = new ConcurrentLinkedQueue<>(URLManager.buildStopsAndSearchesURLs(startDate, endDate, getForces()));
 
-        for (URL url : URLManager.buildStopsAndSearchesURLs(startDate, endDate, getForces())) {
-            threads.add(new FileStopByForceThread(url, pathToSaveFile));
-        }
-        executeThreads(threads);
+        do {
+            List<Runnable> threads = new LinkedList<>();
+            for (int i = 0; i < urls.size(); i++) {
+                threads.add(new FileStopByForceThread(urls, pathToSaveFile));
+            }
+            executeThreads(threads);
+        } while (!urls.isEmpty());
 
         DAOHolder.getInstance().getFileDAO().endWritingIn(pathToSaveFile);
     }
 
     private List<Point> getPointsFromFile(String path) {
-        List<Point> points = DAOHolder.getInstance().getFileDAO().getPoints(path);
+        List<Point> points = POINTS_READER.getPoints(path);
         if (points == null || points.isEmpty()) {
             logger.error("No points in file in PoliceAPIServiceImp method processCrimes()");
             throw new RuntimeException();
@@ -108,18 +115,12 @@ public class PoliceAPIService {
     private void executeThreads(List<Runnable> threads) {
         ScheduledExecutorService scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(CORE_POOL_SIZE);
         System.out.println(threads.size());
-        int maxCon = CONNECTIONS_LIMIT / NUMBER_OF_REQUESTS_PER_OPERATION;
-        if (maxCon < 1){
-            maxCon = 1;
-        }
-        int startingDelaySeconds = 0;
 
-        int count = 0;
+        int startingDelaySeconds = 0;
         for (int i = 0; i < threads.size(); i++) {
-            if ((i != 0) && (i % maxCon == 0)) {
+            if ((i != 0) && (i % CONNECTIONS_LIMIT == 0)) {
                 startingDelaySeconds += CONNECTIONS_LIMIT_PER_TIME_SECONDS;
             }
-            count++;
             scheduledThreadPoolExecutor.schedule(threads.get(i), startingDelaySeconds, TimeUnit.SECONDS);
         }
         awaitTerminationAfterShutdown(scheduledThreadPoolExecutor);

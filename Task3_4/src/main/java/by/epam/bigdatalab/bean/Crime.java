@@ -141,7 +141,6 @@ public class Crime {
                 locationSubtype.equals(crime.locationSubtype) &&
                 month.equals(crime.month) &&
                 location.equals(crime.location) &&
-                Objects.equals(outcomeStatus, crime.outcomeStatus) &&
                 Objects.equals(location, crime.location) &&
                 Objects.equals(outcomeStatus, crime.outcomeStatus);
     }
