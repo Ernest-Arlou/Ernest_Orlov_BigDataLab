@@ -1,37 +1,13 @@
 ## Linux & Bash
 
-#### Linux Topics
-- Structure, File System
-    - What are the basic components of Linux?
-    - What is FHS?
-    - What is directory?
-    - File permissions
-    - why do we need e on directories
-    - Link types
-    - inode
-- Base Linux commands
-    - Be familiar with high level syntax of base linux commands, like 
-        - file system commands, actions with files and directories
-        - string manipulation commands and file editors
-        - process management commands
-    - How to create variable? Function?
-    - Users, groups and their permissions
-    
-__Links:__
+#### Linux Links:__
 - [UNIX / LINUX Tutorial](https://www.tutorialspoint.com/unix/index.htm)
 - [Inode explanation](http://teaching.idallen.com/cst8207/13w/notes/450_file_system.html#things-are-stored-in-index-nodes-inodes)
 
-#### Bash Topics
-- Bash (syntax/features/etc.)
-    - Ways to sun sh script?
-    - What's the difference between single and double quotes? 
-- Bash control flow chars ( | , &, &&, ||, >, <, etc.)
-
-__Links:__ 
+#### Bash Links:__ 
 - [Advanced Bash-Scripting Guide](https://tldp.org/LDP/abs/html/index.html)
 
 ## Task
-
 __Deadline:__ 4 working days.  
 
 __Disclaimer:__ In case of any questions related to the task please immediately contact any of the mentors to avoid misunderstanding.
