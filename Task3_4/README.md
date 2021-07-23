@@ -218,3 +218,29 @@ __Note:__ each person parameter do not depend on the others.
 * Ethnicity.
 * Object of search.
 * Outcome.
+* 
+#### 6. Stop and Search correlation with crimes 
+
+**Description:**
+
+Comparison between Stop and Search data with "Arrest" outcome and Crime data on the street level by the following _Object of Search_/_Crime category_ pairs:
+* "drugs" _to_ "Controlled drugs"
+* "possession-of-weapons" _to_ "Offensive weapons" and "Firearms"
+* "theft-from-the-person" and "shoplifting" _to_ "Stolen goods"
+
+**Input:**
+
+* Start month.
+* End month.
+
+**Output:**
+
+* Street ID.
+* Street Name.
+* Month.
+* Drugs crimes count.
+* Drugs stop-and-search count.
+* Weapons crimes count.
+* Weapons stop-and-search count.
+* Theft crimes count.
+* Theft stop-and-search count.
