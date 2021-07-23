@@ -1,5 +1,5 @@
-# Ernest_Orlov_BigDataLab
 # EPAM Big Data Mentoring Program tasks
+Full task descriprion inside directories
 
 ### Task 1
 Git & Build tools
