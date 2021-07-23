@@ -1,8 +1,11 @@
-# Java - Practical task
-
-### Used technologies:
+# Used technologies:
 fastjson, HikariCP, postgresql, fluentjdbc, commons-cli, junit, slf4j, log4j
 
+# Installation
+Run CrimesScript.sh in Linux or TableScript.sql in PostgreSQL
+Modify database.properties 
+
+# Java - Practical task
 __Deadline:__ 9 working days.  
 
 __Disclaimer:__ In case of any questions related to the task please immediately contact any of the mentors to avoid misunderstanding.
